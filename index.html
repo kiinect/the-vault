@@ -1,104 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>The Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --bg:#0f0e17; --surface:#1a1826; --card:#211f32; --border:#2e2b47;
+            --text:#f0eeff; --muted:#7a758f; --pink:#ff6bcb; --cyan:#5ee7ff; --green:#7cff6b; --red:#ff4466; --yellow:#ffe566; --purple:#b16bff;
+        }
+        body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;margin:0;overflow-x:hidden;}
+        header{padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
+        .logo{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--cyan);}
+        .logo span{color:var(--pink);}
+
+        .auth-btns{display:flex;gap:10px;align-items:center;}
+        .btn-user{background:var(--card);border:1px solid var(--border);color:white;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:800;font-size:0.85rem; transition: 0.2s;}
+        .btn-user:hover{background:var(--border);}
+        .admin-badge{background:var(--red);color:white;font-size:0.6rem;font-weight:900;padding:2px 6px;border-radius:4px;text-transform:uppercase;}
+
+        .tab-bar{display:flex;background:var(--surface);border-bottom:2px solid var(--border);overflow-x:auto;}
+        .tab-btn{padding:1rem 1.5rem;background:none;border:none;color:var(--muted);font-weight:800;cursor:pointer;white-space:nowrap;transition:0.2s;}
+        .tab-btn.active{color:var(--cyan);border-bottom:3px solid var(--cyan);}
+
+        .tab-panel{display:none;padding:2rem;max-width:1400px;margin:auto;}
+        .tab-panel.active{display:block;animation:fadeIn 0.3s ease;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+        .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
+
+        /* CARD STYLES */
+        .card{background:var(--card);border:2px solid var(--border);border-radius:20px;overflow:hidden;transition:0.2s;display:flex;flex-direction:column;}
+        .card:hover{border-color:var(--cyan);transform: translateY(-3px);}
+        .thumb{width:100%;aspect-ratio:1.2;background:var(--surface);display:flex;align-items:center;justify-content:center;}
+        .thumb img{width:100%;height:100%;object-fit:cover;}
+        .card-body{padding:1.2rem;display:flex;flex-direction:column;gap:10px;flex-grow:1;}
+        
+        /* COPY BUTTONS */
+        .copy-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+        .copy-btn{background:var(--surface);border:2px solid var(--border);padding:8px;border-radius:10px;cursor:pointer;color:white;text-align:left;transition:0.2s;}
+        .copy-btn:hover{border-color:var(--cyan);background:rgba(94,231,255,0.05);}
+        .btn-label{display:block;font-size:0.6rem;color:var(--cyan);font-weight:900;text-transform:uppercase;}
+        .btn-val{display:block;font-size:0.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:0.9;}
+
+        /* FORMS */
+        .upload-box{margin-top:40px; background:var(--surface); padding:2rem; border-radius:20px; border:2px solid var(--border); display:none;}
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+        input, textarea{width:100%;padding:12px;background:var(--bg);border:2px solid var(--border);color:white;border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;}
+        .btn-main{width:100%;padding:14px;border-radius:12px;border:none;font-weight:900;cursor:pointer;background:var(--cyan);color:black;}
+
+        /* MODAL */
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000;}
+        .modal.show{display:flex;}
+        .modal-content{background:var(--card);padding:2rem;border-radius:24px;width:350px;border:2px solid var(--border);text-align:center;}
+        
+        .system-tag{font-size:0.5rem;background:rgba(124,255,107,0.1);color:var(--green);padding:2px 4px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+        .admin-controls{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;border-top:1px solid var(--border);}
+        .delete-btn{color:var(--red);background:none;border:none;cursor:pointer;font-size:0.7rem;font-weight:800;text-decoration:underline;}
+    </style>
+</head>
+<body>
+
 <header>
-  <div class="logo">The <span>Vault</span></div>
-  <div class="auth-btns" id="auth-ui">
-    <button class="btn-user" onclick="openModal()">Login / Sign Up</button>
-  </div>
+    <div class="logo">The <span>Vault</span></div>
+    <div class="auth-btns" id="auth-ui">
+        <button class="btn-user" onclick="window.openModal()">Login / Sign Up</button>
+    </div>
 </header>
 
+<div class="tab-bar">
+    <button class="tab-btn active" data-tab="meshes">🧱 Meshes</button>
+    <button class="tab-btn" data-tab="movesets">⚔️ JJS Movesets</button>
+    <button class="tab-btn" data-tab="tutorials">📺 Tutorials</button>
+    <button class="tab-btn" data-tab="sounds">🔊 Sounds</button>
+</div>
+
+<div class="tab-panel active" id="tab-meshes">
+    <div class="cards-grid" id="mesh-grid"></div>
+    <div class="upload-box" id="mesh-upload">
+        <h3>Submit Mesh</h3>
+        <div class="form-grid">
+            <input id="m-name" placeholder="Name">
+            <input id="m-assetid" placeholder="Roblox Asset ID">
+            <input id="m-meshid" placeholder="Mesh ID (Optional)">
+            <input id="m-textid" placeholder="Texture ID (Optional)">
+        </div>
+        <button class="btn-main" onclick="window.submitMesh()">Post Mesh</button>
+    </div>
+</div>
+
+<div class="tab-panel" id="tab-movesets">
+    <div class="cards-grid" id="moveset-grid"></div>
+    <div class="upload-box" id="moveset-upload">
+        <h3>Submit JJS Moveset</h3>
+        <input id="mv-name" placeholder="Moveset Name">
+        <textarea id="mv-code" placeholder="Paste Code Here" style="height:120px;"></textarea>
+        <button class="btn-main" style="background:var(--pink)" onclick="window.submitMoveset()">Post Moveset</button>
+    </div>
+</div>
+
+<div class="tab-panel" id="tab-tutorials">
+    <div class="cards-grid" id="tutorial-grid"></div>
+    <div class="upload-box" id="tutorial-upload">
+        <h3 style="color:var(--yellow)">Upload Tutorial (Admin Only)</h3>
+        <input id="t-name" placeholder="Title">
+        <input id="t-url" placeholder="YouTube URL">
+        <button class="btn-main" style="background:var(--yellow)" onclick="window.submitTutorial()">Post Tutorial</button>
+    </div>
+</div>
+
+<div class="tab-panel" id="tab-sounds">
+    <div class="cards-grid" id="sound-grid"></div>
+    <div class="upload-box" id="sound-upload">
+        <h3>Submit Sound FX</h3>
+        <input id="s-name" placeholder="Sound Name">
+        <input id="s-assetid" placeholder="Roblox Audio ID">
+        <button class="btn-main" style="background:var(--green)" onclick="window.submitSound()">Post Sound</button>
+    </div>
+</div>
+
+<div class="modal" id="auth-modal">
+    <div class="modal-content">
+        <h2 id="modal-title">Vault Access</h2>
+        <input type="email" id="auth-email" placeholder="Email">
+        <input type="password" id="auth-pass" placeholder="Password">
+        <button class="btn-main" onclick="window.handleAuth('login')">Login</button>
+        <button class="btn-main" style="background:var(--surface); color:white; margin-top:10px;" onclick="window.handleAuth('signup')">Create Account</button>
+        <button onclick="window.closeModal()" style="margin-top:15px; background:none; border:none; color:var(--muted); cursor:pointer;">Cancel</button>
+    </div>
+</div>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, setDoc, doc, getDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, setDoc, doc, getDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-  // Your Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyAppd2GsEJyzdN8TxOLCmFOiSXikkXQAuM",
-    authDomain: "the-vault-1ea3a.firebaseapp.com",
-    projectId: "the-vault-1ea3a",
-    storageBucket: "the-vault-1ea3a.firebasestorage.app",
-    messagingSenderId: "780186978448",
-    appId: "1:780186978448:web:cf80b8c1bb6f70d3b3b015"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyAppd2GsEJyzdN8TxOLCmFOiSXikkXQAuM",
+        authDomain: "the-vault-1ea3a.firebaseapp.com",
+        projectId: "the-vault-1ea3a",
+        storageBucket: "the-vault-1ea3a.firebasestorage.app",
+        messagingSenderId: "780186978448",
+        appId: "1:780186978448:web:cf80b8c1bb6f70d3b3b015"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-  const ADMIN_UID = "6eMRv5PgObXsKys66yNzOYRLWGp2";
-  let currentUser = null;
+    const ADMIN_UID = "6eMRv5PgObXsKys66yNzOYRLWGp2";
+    let currentUser = null;
 
-  // --- LOGOUT FIX: Attach to window so HTML can see it ---
-  window.handleLogout = () => {
-    signOut(auth).then(() => {
-      location.reload(); // Refresh to clear admin states
-    }).catch((error) => alert(error.message));
-  };
+    // --- GLOBAL FUNCTIONS ---
+    window.openModal = () => document.getElementById('auth-modal').classList.add('show');
+    window.closeModal = () => document.getElementById('auth-modal').classList.remove('show');
 
-  // --- AUTH OBSERVER ---
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
-    const ui = document.getElementById('auth-ui');
-    const authForms = document.querySelectorAll('.auth-only'); // Meshes/Movesets
-    const tutorialForm = document.querySelector('#tab-tutorials .upload-box');
+    window.handleLogout = () => {
+        signOut(auth).then(() => { location.reload(); }).catch(e => alert(e.message));
+    };
 
-    if(user) {
-      const snap = await getDoc(doc(db, "users", user.uid));
-      if(snap.exists() && snap.data().isBanned) { 
-        alert("Banned."); signOut(auth); return; 
-      }
+    window.handleAuth = async (type) => {
+        const email = document.getElementById('auth-email').value;
+        const pass = document.getElementById('auth-pass').value;
+        try {
+            if(type === 'signup') {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", res.user.uid), { email, isBanned: false });
+            } else { await signInWithEmailAndPassword(auth, email, pass); }
+            window.closeModal();
+        } catch(e) { alert(e.message); }
+    };
 
-      // Show standard upload forms for everyone logged in
-      authForms.forEach(f => f.style.display = 'block');
+    // --- SUBMISSION FUNCTIONS ---
+    window.submitMesh = async () => {
+        const assetId = document.getElementById('m-assetid').value.trim();
+        const userMesh = document.getElementById('m-meshid').value.trim();
+        const userTex = document.getElementById('m-textid').value.trim();
+        if(!assetId) return alert("Asset ID is required!");
 
-      // ONLY show Tutorial upload for Admin
-      if(tutorialForm) {
-        tutorialForm.style.display = (user.uid === ADMIN_UID) ? 'block' : 'none';
-      }
+        await addDoc(collection(db, "meshes"), {
+            name: document.getElementById('m-name').value || "Unnamed Mesh",
+            assetId,
+            meshId: userMesh || ("rbxassetid://" + assetId),
+            textureId: userTex || "None",
+            autoMesh: !userMesh,
+            autoTex: !userTex,
+            userId: currentUser.uid,
+            createdAt: Date.now()
+        });
+        alert("Mesh Saved!");
+    };
 
-      // UI Update with Admin Page link
-      ui.innerHTML = `
-        <span style="font-size:0.8rem; color:var(--muted)">${user.email.split('@')[0]}</span>
-        ${user.uid === ADMIN_UID ? '<span class="admin-badge">Admin</span>' : ''}
-        ${user.uid === ADMIN_UID ? '<a href="admin.html" class="btn-user" style="text-decoration:none; background:var(--purple)">Admin Panel</a>' : ''}
-        <button class="btn-user" onclick="handleLogout()">Logout</button>
-      `;
-    } else {
-      authForms.forEach(f => f.style.display = 'none');
-      if(tutorialForm) tutorialForm.style.display = 'none';
-      ui.innerHTML = `<button class="btn-user" onclick="openModal()">Login / Sign Up</button>`;
-    }
-  });
+    window.submitMoveset = async () => {
+        await addDoc(collection(db, "movesets"), { 
+            name: document.getElementById('mv-name').value, 
+            code: document.getElementById('mv-code').value, 
+            userId: currentUser.uid, createdAt: Date.now() 
+        });
+        alert("Moveset Saved!");
+    };
 
-  // --- GLOBAL FUNCTIONS ---
-  window.openModal = () => document.getElementById('auth-modal').classList.add('show');
-  window.closeModal = () => document.getElementById('auth-modal').classList.remove('show');
-  
-  window.handleAuth = async (type) => {
-    const email = document.getElementById('auth-email').value;
-    const pass = document.getElementById('auth-pass').value;
-    try {
-      if(type === 'signup') {
-        const res = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db, "users", res.user.uid), { email, isBanned: false });
-      } else { await signInWithEmailAndPassword(auth, email, pass); }
-      closeModal();
-    } catch(e) { alert(e.message); }
-  };
+    window.submitTutorial = async () => {
+        if(currentUser?.uid !== ADMIN_UID) return;
+        const url = document.getElementById('t-url').value;
+        const vidId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
+        await addDoc(collection(db, "tutorials"), { 
+            name: document.getElementById('t-name').value, 
+            url, vidId, userId: currentUser.uid, createdAt: Date.now() 
+        });
+        alert("Tutorial Added!");
+    };
 
-  // Re-link the submission functions
-  window.submitMesh = async () => { /* Same as before */ };
-  window.submitMoveset = async () => { /* Same as before */ };
-  window.submitTutorial = async () => {
-    if(currentUser.uid !== ADMIN_UID) return alert("Unauthorized");
-    const url = document.getElementById('t-url').value;
-    const vidId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-    await addDoc(collection(db, "tutorials"), { 
-      name: document.getElementById('t-name').value, 
-      url, 
-      vidId, 
-      userId: currentUser.uid, 
-      createdAt: Date.now() 
+    window.submitSound = async () => {
+        await addDoc(collection(db, "sounds"), { 
+            name: document.getElementById('s-name').value, 
+            assetId: document.getElementById('s-assetid').value, 
+            userId: currentUser.uid, createdAt: Date.now() 
+        });
+        alert("Sound Added!");
+    };
+
+    // --- AUTH OBSERVER ---
+    onAuthStateChanged(auth, async (user) => {
+        currentUser = user;
+        const ui = document.getElementById('auth-ui');
+        const mForm = document.getElementById('mesh-upload');
+        const mvForm = document.getElementById('moveset-upload');
+        const tForm = document.getElementById('tutorial-upload');
+        const sForm = document.getElementById('sound-upload');
+
+        if(user) {
+            const snap = await getDoc(doc(db, "users", user.uid));
+            if(snap.exists() && snap.data().isBanned) { alert("Banned."); signOut(auth); return; }
+            
+            mForm.style.display = mvForm.style.display = sForm.style.display = 'block';
+            tForm.style.display = (user.uid === ADMIN_UID) ? 'block' : 'none';
+
+            ui.innerHTML = `
+                <span style="font-size:0.75rem; opacity:0.6">${user.email.split('@')[0]}</span>
+                ${user.uid === ADMIN_UID ? '<a href="admin.html" class="btn-user" style="background:var(--purple); text-decoration:none;">Admin Panel</a>' : ''}
+                <button class="btn-user" onclick="window.handleLogout()">Logout</button>
+            `;
+        } else {
+            mForm.style.display = mvForm.style.display = sForm.style.display = tForm.style.display = 'none';
+            ui.innerHTML = `<button class="btn-user" onclick="window.openModal()">Login / Sign Up</button>`;
+        }
     });
-    alert("Tutorial Added!");
-  };
+
+    // --- SYNC ENGINE ---
+    const setupSync = (col, gridId, renderFn) => {
+        onSnapshot(query(collection(db, col), orderBy("createdAt", "desc")), (s) => {
+            document.getElementById(gridId).innerHTML = s.docs.map(d => renderFn({id: d.id, ...d.data()})).join('');
+        });
+    };
+
+    setupSync("meshes", "mesh-grid", (m) => `
+        <div class="card">
+            <div class="thumb"><img src="https://thumbnails.roblox.com/v1/assets?assetIds=${m.assetId}&size=420x420&format=Png"></div>
+            <div class="card-body">
+                <strong>${m.name}</strong>
+                <div class="copy-grid">
+                    <button class="copy-btn" onclick="navigator.clipboard.writeText('${m.meshId}'); alert('Copied Mesh ID')">
+                        <span class="btn-label">Mesh ID ${m.autoMesh ? '<span class="system-tag">SYS</span>' : ''}</span>
+                        <span class="btn-val">${m.meshId}</span>
+                    </button>
+                    <button class="copy-btn" onclick="navigator.clipboard.writeText('${m.textureId}'); alert('Copied Texture ID')">
+                        <span class="btn-label" style="color:var(--pink)">Texture ID ${m.autoTex ? '<span class="system-tag">SYS</span>' : ''}</span>
+                        <span class="btn-val">${m.textureId}</span>
+                    </button>
+                </div>
+                ${currentUser?.uid === ADMIN_UID ? `
+                    <div class="admin-controls">
+                        <button class="delete-btn" onclick="if(confirm('Delete?')) deleteDoc(doc(db,'meshes','${m.id}'))">Delete</button>
+                        <button class="delete-btn" style="color:var(--yellow)" onclick="if(confirm('Ban?')) updateDoc(doc(db,'users','${m.userId}'),{isBanned:true})">Ban User</button>
+                    </div>` : ''}
+            </div>
+        </div>
+    `);
+
+    setupSync("movesets", "moveset-grid", (m) => `
+        <div class="card" style="padding:1rem;">
+            <strong>⚔️ ${m.name}</strong>
+            <button class="btn-main" style="background:var(--pink); margin-top:10px;" onclick="navigator.clipboard.writeText('${m.code}'); alert('Copied Moveset!')">Copy Moveset Code</button>
+            ${currentUser?.uid === ADMIN_UID ? `<button class="delete-btn" style="margin-top:10px" onclick="deleteDoc(doc(db,'movesets','${m.id}'))">Delete</button>` : ''}
+        </div>
+    `);
+
+    setupSync("tutorials", "tutorial-grid", (t) => `
+        <div class="card">
+            <div class="thumb"><img src="https://img.youtube.com/vi/${t.vidId}/hqdefault.jpg"></div>
+            <div class="card-body">
+                <strong>${t.name}</strong>
+                <a href="${t.url}" target="_blank" class="btn-main" style="background:var(--yellow); text-align:center; text-decoration:none;">Watch Tutorial</a>
+                ${currentUser?.uid === ADMIN_UID ? `<button class="delete-btn" onclick="deleteDoc(doc(db,'tutorials','${t.id}'))">Delete</button>` : ''}
+            </div>
+        </div>
+    `);
+
+    setupSync("sounds", "sound-grid", (s) => `
+        <div class="card" style="padding:1rem;">
+            <strong>🔊 ${s.name}</strong>
+            <button class="copy-btn" style="margin-top:10px; border-color:var(--green)" onclick="navigator.clipboard.writeText('${s.assetId}'); alert('Copied Audio ID')">
+                <span class="btn-label" style="color:var(--green)">Sound ID</span>
+                <span class="btn-val">${s.assetId}</span>
+            </button>
+            ${currentUser?.uid === ADMIN_UID ? `<button class="delete-btn" style="margin-top:10px" onclick="deleteDoc(doc(db,'sounds','${s.id}'))">Delete</button>` : ''}
+        </div>
+    `);
+
+    // Tab Switcher
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.onclick = () => {
+            document.querySelectorAll('.tab-btn, .tab-panel').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            document.getElementById('tab-' + b.dataset.tab).classList.add('active');
+        }
+    });
 </script>
+</body>
+</html>
