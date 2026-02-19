@@ -12,35 +12,38 @@
         }
         body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;margin:0;overflow-x:hidden;}
         header{padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
-        .logo{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--cyan);}
+        .logo{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--cyan);cursor:pointer;}
         .logo span{color:var(--pink);}
+        
         .auth-btns{display:flex;gap:10px;align-items:center;}
-        .btn-user{background:var(--card);border:1px solid var(--border);color:white;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:800;font-size:0.85rem;}
+        .btn-user{background:var(--card);border:1px solid var(--border);color:white;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:800;font-size:0.85rem;transition:0.2s;}
+        .btn-user:hover{background:var(--border);}
 
         .tab-bar{display:flex;background:var(--surface);border-bottom:2px solid var(--border);overflow-x:auto;}
-        .tab-btn{padding:1rem 1.5rem;background:none;border:none;color:var(--muted);font-weight:800;cursor:pointer;white-space:nowrap;}
+        .tab-btn{padding:1rem 1.5rem;background:none;border:none;color:var(--muted);font-weight:800;cursor:pointer;white-space:nowrap;transition:0.2s;}
         .tab-btn.active{color:var(--cyan);border-bottom:3px solid var(--cyan);}
-        #admin-tab-btn { display:none; color: var(--purple); }
+        #admin-tab-btn { display:none; color: var(--purple) !important; }
 
         .tab-panel{display:none;padding:2rem;max-width:1400px;margin:auto;}
-        .tab-panel.active{display:block;}
+        .tab-panel.active{display:block;animation:fadeIn 0.3s ease;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-        /* Admin UI Styles from your admin.html */
-        .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2rem;}
-        .stat-box{background:var(--card);border:2px solid var(--border);border-radius:15px;padding:1.5rem;text-align:center;}
-        .stat-box h2 { font-family:'Fredoka One'; margin:0; color:var(--cyan); }
-        .admin-card{background:var(--card);border:2px solid var(--border);border-radius:15px;padding:1.5rem;margin-bottom:1.5rem;}
-        .q-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid var(--border);}
-        .btn-action{padding:5px 10px;border-radius:5px;border:none;cursor:pointer;font-weight:bold;margin-left:5px;}
+        /* Admin UI */
+        .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2rem;}
+        .stat-box{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:1.5rem;text-align:center;}
+        .stat-num{display:block;font-size:2.5rem;font-weight:900;color:var(--cyan);font-family:'Fredoka One';}
+        .admin-section{background:var(--surface);border:2px solid var(--border);border-radius:24px;padding:2rem;margin-bottom:2rem;}
+        .q-item{display:flex;justify-content:space-between;align-items:center;padding:15px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;}
         
-        /* General Site Styles */
+        /* Cards */
         .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
-        .card{background:var(--card);border:2px solid var(--border);border-radius:20px;overflow:hidden;}
-        .thumb img{width:100%;aspect-ratio:1.2;object-fit:cover;}
-        .card-body{padding:1.2rem;}
-        .copy-btn{background:var(--surface);border:2px solid var(--border);padding:8px;border-radius:10px;cursor:pointer;color:white;width:100%;text-align:left;margin-top:10px;}
+        .card{background:var(--card);border:2px solid var(--border);border-radius:20px;overflow:hidden;transition:0.2s;}
+        .thumb{width:100%;aspect-ratio:1.2;background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+        .thumb img{width:100%;height:100%;object-fit:cover;}
+        .card-body{padding:1.2rem;display:flex;flex-direction:column;gap:10px;}
+        
         .upload-box{margin-top:40px; background:var(--surface); padding:2rem; border-radius:20px; border:2px solid var(--border); display:none;}
-        input, textarea, select{width:100%;padding:12px;background:var(--bg);border:2px solid var(--border);color:white;border-radius:10px;margin-bottom:12px;box-sizing:border-box;}
+        input, textarea, select{width:100%;padding:12px;background:var(--bg);border:2px solid var(--border);color:white;border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;}
         .btn-main{width:100%;padding:14px;border-radius:12px;border:none;font-weight:900;cursor:pointer;background:var(--cyan);color:black;}
 
         .modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000;}
@@ -51,7 +54,7 @@
 <body>
 
 <header>
-    <div class="logo">The <span>Vault</span></div>
+    <div class="logo" onclick="window.switchTab('meshes')">The <span>Vault</span></div>
     <div class="auth-btns" id="auth-ui">
         <button class="btn-user" onclick="window.openModal()">Login / Sign Up</button>
     </div>
@@ -62,33 +65,72 @@
     <button class="tab-btn" data-tab="movesets">⚔️ Movesets</button>
     <button class="tab-btn" data-tab="tutorials">📺 Tutorials</button>
     <button class="tab-btn" data-tab="sounds">🔊 Sounds</button>
-    <button class="tab-btn" id="admin-tab-btn" data-tab="admin">🛡️ Admin</button>
+    <button class="tab-btn" id="admin-tab-btn" data-tab="admin">🛡️ Admin Panel</button>
 </div>
 
-<div class="tab-panel active" id="tab-meshes"><div class="cards-grid" id="mesh-grid"></div>
-    <div class="upload-box" id="mesh-upload"><h3>Submit Mesh</h3><input id="m-name" placeholder="Name"><input id="m-id" placeholder="Asset ID"><button class="btn-main" onclick="window.submitItem('meshes')">Post</button></div>
+<div class="tab-panel active" id="tab-meshes">
+    <div class="cards-grid" id="mesh-grid"></div>
+    <div class="upload-box" id="mesh-upload">
+        <h3>Submit Mesh</h3>
+        <input id="m-name" placeholder="Item Name">
+        <input id="m-id" placeholder="Roblox Asset ID">
+        <button class="btn-main" onclick="window.submitItem('meshes')">Post to Vault</button>
+    </div>
 </div>
+
+<div class="tab-panel" id="tab-movesets">
+    <div class="cards-grid" id="moveset-grid"></div>
+    <div class="upload-box" id="moveset-upload">
+        <h3>Submit Moveset</h3>
+        <input id="mv-name" placeholder="Moveset Name">
+        <textarea id="mv-code" placeholder="Paste Code Here" style="height:100px;"></textarea>
+        <button class="btn-main" style="background:var(--pink)" onclick="window.submitItem('movesets')">Post Moveset</button>
+    </div>
+</div>
+
+<div class="tab-panel" id="tab-tutorials">
+    <div class="cards-grid" id="tutorial-grid"></div>
+    <div class="upload-box" id="tutorial-upload">
+        <h3 style="color:var(--yellow)">Add Official Tutorial</h3>
+        <input id="t-name" placeholder="Video Title">
+        <input id="t-url" placeholder="YouTube URL">
+        <button class="btn-main" style="background:var(--yellow)" onclick="window.submitItem('tutorials')">Add Video</button>
+    </div>
+</div>
+
+<div class="tab-panel" id="tab-sounds">
+    <div class="cards-grid" id="sound-grid"></div>
+    <div class="upload-box" id="sound-upload">
+        <h3>Submit Sound FX</h3>
+        <input id="s-name" placeholder="Sound Name">
+        <input id="s-id" placeholder="Roblox Audio ID">
+        <button class="btn-main" style="background:var(--green)" onclick="window.submitItem('sounds')">Post Sound</button>
+    </div>
+</div>
+
 <div class="tab-panel" id="tab-admin">
     <div class="stat-grid">
-        <div class="stat-box"><h2 id="stat-total">0</h2><div>Total Items</div></div>
-        <div class="stat-box"><h2 id="stat-pending" style="color:var(--yellow)">0</h2><div>Pending</div></div>
-        <div class="stat-box"><h2 id="stat-users" style="color:var(--pink)">0</h2><div>Users</div></div>
+        <div class="stat-box"><span class="stat-num" id="stat-total">0</span><small>Total Approved</small></div>
+        <div class="stat-box"><span class="stat-num" id="stat-pending" style="color:var(--yellow)">0</span><small>Pending Approval</small></div>
+        <div class="stat-box"><span class="stat-num" id="stat-users" style="color:var(--pink)">0</span><small>Total Users</small></div>
     </div>
 
-    <div class="admin-card">
-        <h3>⏳ Pending Queue</h3>
-        <div id="admin-pending-list"></div>
+    <div class="admin-section">
+        <h3>⏳ Pending Approval Queue</h3>
+        <div id="pending-list"></div>
     </div>
 
-    <div class="admin-card">
+    <div class="admin-section">
         <h3>👥 User Management</h3>
-        <div id="admin-user-list"></div>
+        <div id="user-list"></div>
     </div>
 
-    <div class="admin-card">
-        <h3>⚙️ Site Settings</h3>
-        <label>Require Approval for New Posts</label>
-        <input type="checkbox" id="setting-approval" onchange="window.updateSetting('requireApproval', this.checked)">
+    <div class="admin-section">
+        <h3>⚙️ Global Settings</h3>
+        <div style="display:flex; align-items:center; gap:15px;">
+            <input type="checkbox" id="setting-approval" style="width:20px; margin:0;" onchange="window.updateSetting('requireApproval', this.checked)">
+            <label for="setting-approval">Require Admin Approval for new posts</label>
+        </div>
     </div>
 </div>
 
@@ -98,14 +140,14 @@
         <input type="email" id="auth-email" placeholder="Email">
         <input type="password" id="auth-pass" placeholder="Password">
         <button class="btn-main" onclick="window.handleAuth('login')">Login</button>
-        <button class="btn-main" style="background:var(--surface); color:white; margin-top:10px;" onclick="window.handleAuth('signup')">Sign Up</button>
-        <button onclick="window.closeModal()" style="background:none; border:none; color:var(--muted); cursor:pointer; margin-top:10px;">Cancel</button>
+        <button class="btn-main" style="background:var(--surface); color:white; margin-top:10px;" onclick="window.handleAuth('signup')">Create Account</button>
+        <button onclick="window.closeModal()" style="margin-top:15px; background:none; border:none; color:var(--muted); cursor:pointer;">Cancel</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, doc, deleteDoc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, deleteDoc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -123,12 +165,18 @@
     const ADMIN_UID = "6eMRv5PgObXsKys66yNzOYRLWGp2";
     let currentUser = null;
 
-    // UI Helpers
+    // --- UTILITIES ---
     window.openModal = () => document.getElementById('auth-modal').classList.add('show');
     window.closeModal = () => document.getElementById('auth-modal').classList.remove('show');
     window.handleLogout = () => signOut(auth).then(() => location.reload());
 
-    // Auth Logic
+    window.switchTab = (tabId) => {
+        document.querySelectorAll('.tab-btn, .tab-panel').forEach(el => el.classList.remove('active'));
+        document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        document.getElementById('tab-' + tabId).classList.add('active');
+    };
+
+    // --- AUTH ---
     window.handleAuth = async (type) => {
         const email = document.getElementById('auth-email').value;
         const pass = document.getElementById('auth-pass').value;
@@ -141,81 +189,138 @@
         } catch(e) { alert(e.message); }
     };
 
-    // Management Functions
-    window.submitItem = async (col) => {
-        const settings = (await getDoc(doc(db, "settings", "config"))).data();
-        await addDoc(collection(db, col), {
-            name: document.getElementById('m-name').value,
-            assetId: document.getElementById('m-id').value,
-            status: settings.requireApproval ? 'pending' : 'approved',
-            userId: currentUser.uid,
-            createdAt: Date.now()
-        });
-        alert("Submitted!");
-    };
-
-    window.approveItem = (col, id) => updateDoc(doc(db, col, id), { status: 'approved' });
-    window.deleteItem = (col, id) => confirm("Delete?") && deleteDoc(doc(db, col, id));
-    window.updateSetting = (key, val) => setDoc(doc(db, "settings", "config"), { [key]: val }, { merge: true });
-
-    // Auth Observer
     onAuthStateChanged(auth, async (user) => {
         currentUser = user;
+        const ui = document.getElementById('auth-ui');
         const adminBtn = document.getElementById('admin-tab-btn');
+        const uploads = document.querySelectorAll('.upload-box');
+
         if(user) {
+            const userSnap = await getDoc(doc(db, "users", user.uid));
+            if(userSnap.exists() && userSnap.data().isBanned) { alert("You are banned."); signOut(auth); return; }
+
+            uploads.forEach(box => {
+                if(box.id === 'tutorial-upload') box.style.display = (user.uid === ADMIN_UID) ? 'block' : 'none';
+                else box.style.display = 'block';
+            });
+
             if(user.uid === ADMIN_UID) {
                 adminBtn.style.display = 'block';
-                loadAdminData();
+                loadAdminDash();
             }
-            document.getElementById('auth-ui').innerHTML = `<button class="btn-user" onclick="window.handleLogout()">Logout</button>`;
-            document.querySelectorAll('.upload-box').forEach(b => b.style.display = 'block');
+
+            ui.innerHTML = `
+                <span style="font-size:0.7rem; opacity:0.5; margin-right:10px;">${user.email}</span>
+                ${user.uid === ADMIN_UID ? '<button class="btn-user" onclick="window.switchTab(\'admin\')" style="background:var(--purple); border-color:var(--purple)">Admin Dash</button>' : ''}
+                <button class="btn-user" onclick="window.handleLogout()">Logout</button>
+            `;
+        } else {
+            uploads.forEach(box => box.style.display = 'none');
+            adminBtn.style.display = 'none';
+            ui.innerHTML = `<button class="btn-user" onclick="window.openModal()">Login / Sign Up</button>`;
         }
     });
 
-    // Sync Data
-    const syncPublic = (col, gridId) => {
-        onSnapshot(query(collection(db, col), where("status", "==", "approved")), (snap) => {
-            document.getElementById(gridId).innerHTML = snap.docs.map(d => {
-                const m = d.data();
-                return `<div class="card">
-                    <div class="thumb"><img src="https://thumbnails.roblox.com/v1/assets?assetIds=${m.assetId}&size=420x420&format=Png"></div>
-                    <div class="card-body"><strong>${m.name}</strong><button class="copy-btn">ID: ${m.assetId}</button></div>
-                </div>`;
-            }).join('');
+    // --- CONTENT ENGINE ---
+    window.submitItem = async (type) => {
+        const config = (await getDoc(doc(db, "settings", "config"))).data() || { requireApproval: false };
+        const data = {
+            userId: currentUser.uid,
+            createdAt: Date.now(),
+            status: (currentUser.uid === ADMIN_UID || !config.requireApproval) ? 'approved' : 'pending'
+        };
+
+        if(type === 'meshes') { data.name = document.getElementById('m-name').value; data.assetId = document.getElementById('m-id').value; }
+        if(type === 'movesets') { data.name = document.getElementById('mv-name').value; data.code = document.getElementById('mv-code').value; }
+        if(type === 'tutorials') { 
+            const url = document.getElementById('t-url').value;
+            data.name = document.getElementById('t-name').value;
+            data.url = url;
+            data.assetId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop(); 
+        }
+        if(type === 'sounds') { data.name = document.getElementById('s-name').value; data.assetId = document.getElementById('s-id').value; }
+
+        await addDoc(collection(db, type), data);
+        alert(data.status === 'pending' ? "Submitted for approval!" : "Post live!");
+        location.reload();
+    };
+
+    const syncGrid = (colName, gridId, templateFn) => {
+        onSnapshot(query(collection(db, colName), where("status", "==", "approved"), orderBy("createdAt", "desc")), (snap) => {
+            document.getElementById(gridId).innerHTML = snap.docs.map(d => templateFn({id: d.id, ...d.data()})).join('');
         });
     };
 
-    function loadAdminData() {
+    syncGrid("meshes", "mesh-grid", (m) => `
+        <div class="card">
+            <div class="thumb"><img src="https://thumbnails.roblox.com/v1/assets?assetIds=${m.assetId}&size=420x420&format=Png"></div>
+            <div class="card-body">
+                <strong>${m.name}</strong>
+                <button class="btn-main" onclick="navigator.clipboard.writeText('rbxassetid://${m.assetId}'); alert('Copied ID')">Copy Mesh ID</button>
+            </div>
+        </div>
+    `);
+    // ... Add syncGrid for other types ...
+
+    // --- ADMIN PANEL LOGIC ---
+    function loadAdminDash() {
         // Pending List
-        onSnapshot(query(collection(db, "meshes"), where("status", "==", "pending")), (snap) => {
-            document.getElementById('stat-pending').innerText = snap.size;
-            document.getElementById('admin-pending-list').innerHTML = snap.docs.map(d => `
+        const types = ['meshes', 'movesets', 'sounds'];
+        let pendingCount = 0;
+        document.getElementById('pending-list').innerHTML = '';
+
+        types.forEach(type => {
+            onSnapshot(query(collection(db, type), where("status", "==", "pending")), (snap) => {
+                pendingCount += snap.size;
+                document.getElementById('stat-pending').innerText = pendingCount;
+                snap.forEach(d => {
+                    const item = d.data();
+                    const el = document.createElement('div');
+                    el.className = 'q-item';
+                    el.innerHTML = `
+                        <span>[${type.toUpperCase()}] ${item.name}</span>
+                        <div>
+                            <button class="btn-user" style="background:var(--green); color:black" onclick="window.modItem('${type}','${d.id}','approved')">Approve</button>
+                            <button class="btn-user" style="background:var(--red)" onclick="window.modItem('${type}','${d.id}','delete')">Delete</button>
+                        </div>
+                    `;
+                    document.getElementById('pending-list').appendChild(el);
+                });
+            });
+        });
+
+        // User List
+        onSnapshot(collection(db, "users"), (snap) => {
+            document.getElementById('stat-users').innerText = snap.size;
+            document.getElementById('user-list').innerHTML = snap.docs.map(d => `
                 <div class="q-item">
-                    <span>🧱 ${d.data().name}</span>
-                    <div>
-                        <button class="btn-action" style="background:var(--green)" onclick="window.approveItem('meshes','${d.id}')">Approve</button>
-                        <button class="btn-action" style="background:var(--red)" onclick="window.deleteItem('meshes','${d.id}')">Reject</button>
-                    </div>
+                    <span>${d.data().email} ${d.data().isBanned ? '🚫' : '✅'}</span>
+                    <button class="btn-user" style="background:var(--red)" onclick="window.toggleBan('${d.id}', ${!d.data().isBanned})">
+                        ${d.data().isBanned ? 'Unban' : 'Ban'}
+                    </button>
                 </div>
             `).join('');
         });
-        
-        // Settings Sync
-        onSnapshot(doc(db, "settings", "config"), (doc) => {
-            if(doc.exists()) document.getElementById('setting-approval').checked = doc.data().requireApproval;
+
+        // Settings
+        onSnapshot(doc(db, "settings", "config"), (d) => {
+            if(d.exists()) document.getElementById('setting-approval').checked = d.data().requireApproval;
         });
     }
 
-    // Tabs
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.tab-btn, .tab-panel').forEach(el => el.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-        };
-    });
+    window.modItem = async (col, id, action) => {
+        if(action === 'approved') await updateDoc(doc(db, col, id), { status: 'approved' });
+        else await deleteDoc(doc(db, col, id));
+        alert("Done!");
+    };
 
-    syncPublic("meshes", "mesh-grid");
+    window.toggleBan = async (uid, status) => { await updateDoc(doc(db, "users", uid), { isBanned: status }); };
+    window.updateSetting = async (key, val) => { await setDoc(doc(db, "settings", "config"), { [key]: val }, { merge: true }); };
+
+    // --- TAB CLICKS ---
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = () => window.switchTab(btn.dataset.tab);
+    });
 </script>
 </body>
 </html>
