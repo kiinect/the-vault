@@ -8,116 +8,216 @@
     <style>
         :root {
             --bg:#0f0e17; --surface:#1a1826; --card:#211f32; --border:#2e2b47;
-            --text:#f0eeff; --muted:#7a758f; --pink:#ff6bcb; --cyan:#5ee7ff; --green:#7cff6b; --red:#ff4466; --yellow:#ffe566; --purple:#b16bff;
+            --text:#f0eeff; --muted:#7a758f; --pink:#ff6bcb; --cyan:#5ee7ff;
+            --green:#7cff6b; --red:#ff4466; --yellow:#ffe566; --purple:#b16bff;
         }
+        *{box-sizing:border-box;}
         body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;margin:0;overflow-x:hidden;}
-        header{padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
-        .logo{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--cyan);cursor:pointer;}
-        .logo span{color:var(--pink);}
-        
-        .auth-btns{display:flex;gap:10px;align-items:center;}
-        .btn-user{background:var(--card);border:1px solid var(--border);color:white;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:800;font-size:0.85rem;transition:0.2s;}
-        .btn-user:hover{background:var(--border);}
 
-        .tab-bar{display:flex;background:var(--surface);border-bottom:2px solid var(--border);overflow-x:auto;}
-        .tab-btn{padding:1rem 1.5rem;background:none;border:none;color:var(--muted);font-weight:800;cursor:pointer;white-space:nowrap;transition:0.2s;}
-        .tab-btn.active{color:var(--cyan);border-bottom:3px solid var(--cyan);}
-        #admin-tab-btn { display:none; color: var(--purple) !important; }
+        header{padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap;}
+        .logo{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--cyan);cursor:pointer;user-select:none;}
+        .logo span{color:var(--pink);}
+        .header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+        #preview-banner{display:none;background:linear-gradient(90deg,var(--purple),var(--pink));color:white;text-align:center;padding:8px;font-weight:800;font-size:0.9rem;position:sticky;top:72px;z-index:99;}
+        #preview-banner button{background:rgba(0,0,0,0.3);border:none;color:white;padding:4px 14px;border-radius:6px;cursor:pointer;font-weight:800;margin-left:12px;font-family:'Nunito',sans-serif;}
+
+        .tab-bar{display:flex;background:var(--surface);border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+        .tab-bar::-webkit-scrollbar{display:none;}
+        .tab-btn{padding:1rem 1.5rem;background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);font-weight:800;cursor:pointer;white-space:nowrap;transition:0.2s;font-family:'Nunito',sans-serif;}
+        .tab-btn:hover{color:var(--text);}
+        .tab-btn.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+        #admin-tab-btn{display:none;color:var(--purple)!important;}
+        #admin-tab-btn.active{border-bottom-color:var(--purple)!important;}
 
         .tab-panel{display:none;padding:2rem;max-width:1400px;margin:auto;}
-        .tab-panel.active{display:block;animation:fadeIn 0.3s ease;}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-        /* Admin UI */
-        .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2rem;}
-        .stat-box{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:1.5rem;text-align:center;}
-        .stat-num{display:block;font-size:2.5rem;font-weight:900;color:var(--cyan);font-family:'Fredoka One';}
-        .admin-section{background:var(--surface);border:2px solid var(--border);border-radius:24px;padding:2rem;margin-bottom:2rem;}
-        .q-item{display:flex;justify-content:space-between;align-items:center;padding:15px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;}
-        
-        /* Cards */
-        .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
-        .card{background:var(--card);border:2px solid var(--border);border-radius:20px;overflow:hidden;transition:0.2s;}
-        .thumb{width:100%;aspect-ratio:1.2;background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+        .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;}
+        .card{background:var(--card);border:2px solid var(--border);border-radius:20px;overflow:hidden;transition:transform 0.2s,border-color 0.2s;}
+        .card:hover{border-color:var(--cyan);transform:translateY(-3px);}
+        .thumb{width:100%;aspect-ratio:4/3;background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
         .thumb img{width:100%;height:100%;object-fit:cover;}
-        .card-body{padding:1.2rem;display:flex;flex-direction:column;gap:10px;}
-        
-        .upload-box{margin-top:40px; background:var(--surface); padding:2rem; border-radius:20px; border:2px solid var(--border); display:none;}
-        input, textarea, select{width:100%;padding:12px;background:var(--bg);border:2px solid var(--border);color:white;border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;}
-        .btn-main{width:100%;padding:14px;border-radius:12px;border:none;font-weight:900;cursor:pointer;background:var(--cyan);color:black;}
+        .card-body{padding:1.2rem;display:flex;flex-direction:column;gap:8px;}
+        .card-title{font-weight:900;font-size:1rem;margin:0;}
+        .card-meta{font-size:0.75rem;color:var(--muted);}
+        .uploader-tag{display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--muted);background:var(--surface);padding:3px 8px;border-radius:20px;border:1px solid var(--border);width:fit-content;}
+        .admin-card-actions{display:flex;gap:6px;margin-top:2px;}
+        .admin-card-actions button{flex:1;padding:7px;border-radius:8px;border:none;font-weight:800;cursor:pointer;font-size:0.75rem;font-family:'Nunito',sans-serif;}
+        .copy-row{display:flex;flex-direction:column;gap:6px;}
+        .btn-copy{width:100%;padding:9px 12px;border-radius:10px;border:none;font-weight:800;cursor:pointer;font-size:0.82rem;font-family:'Nunito',sans-serif;transition:opacity 0.15s,transform 0.1s;text-align:left;}
+        .btn-copy:hover{opacity:0.85;transform:translateX(2px);}
 
-        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000;}
+        .code-block{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:monospace;font-size:0.72rem;max-height:72px;overflow:hidden;color:var(--muted);white-space:pre-wrap;word-break:break-all;line-height:1.4;}
+        .sound-icon{font-size:3rem;display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg,#1a1826,#0f0e17);}
+
+        .upload-box{margin-top:2rem;background:var(--surface);padding:2rem;border-radius:20px;border:2px solid var(--border);}
+        .upload-box h3{margin:0 0 1rem;}
+        input,textarea,select{width:100%;padding:12px;background:var(--bg);border:2px solid var(--border);color:white;border-radius:10px;margin-bottom:12px;font-family:inherit;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+        input:focus,textarea:focus{border-color:var(--cyan);}
+        .btn-main{width:100%;padding:13px;border-radius:12px;border:none;font-weight:900;cursor:pointer;font-size:1rem;transition:opacity 0.2s;font-family:'Nunito',sans-serif;}
+        .btn-main:hover{opacity:0.85;}
+        .btn-user{background:var(--card);border:1px solid var(--border);color:white;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:800;font-size:0.85rem;transition:0.2s;font-family:'Nunito',sans-serif;}
+        .btn-user:hover{background:var(--border);}
+
+        .empty-state{text-align:center;padding:4rem 2rem;color:var(--muted);}
+        .empty-state .icon{font-size:3rem;margin-bottom:1rem;}
+
+        .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.2rem;margin-bottom:2rem;}
+        .stat-box{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:1.4rem;text-align:center;}
+        .stat-num{display:block;font-size:2.2rem;font-weight:900;color:var(--cyan);font-family:'Fredoka One';}
+        .admin-section{background:var(--surface);border:2px solid var(--border);border-radius:24px;padding:2rem;margin-bottom:2rem;}
+        .admin-section h3{margin:0 0 1.2rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+        .q-item{display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;gap:12px;flex-wrap:wrap;}
+        .q-item-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;}
+        .q-item-name{font-weight:800;font-size:0.95rem;}
+        .q-item-sub{font-size:0.75rem;color:var(--muted);}
+        .q-actions{display:flex;gap:8px;flex-shrink:0;}
+
+        .content-table{width:100%;border-collapse:collapse;}
+        .content-table th{text-align:left;padding:10px 12px;color:var(--muted);font-size:0.8rem;border-bottom:2px solid var(--border);white-space:nowrap;}
+        .content-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:0.85rem;vertical-align:middle;}
+        .content-table tr:last-child td{border-bottom:none;}
+        .content-table tr:hover td{background:rgba(255,255,255,0.02);}
+        .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:800;}
+        .badge-approved{background:rgba(124,255,107,0.15);color:var(--green);}
+        .badge-pending{background:rgba(255,229,102,0.15);color:var(--yellow);}
+
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem;}
         .modal.show{display:flex;}
-        .modal-content{background:var(--card);padding:2rem;border-radius:24px;width:350px;border:2px solid var(--border);text-align:center;}
+        .modal-content{background:var(--card);padding:2rem;border-radius:24px;width:100%;max-width:380px;border:2px solid var(--border);text-align:center;}
+        .modal-content h2{margin:0 0 1.2rem;}
+
+        .setting-row{display:flex;align-items:center;gap:15px;padding:14px 0;border-bottom:1px solid var(--border);}
+        .setting-row:last-child{border-bottom:none;}
+        .setting-row label:first-child{flex:1;font-weight:700;}
+        .toggle{position:relative;width:48px;height:26px;flex-shrink:0;}
+        .toggle input{opacity:0;width:0;height:0;position:absolute;}
+        .toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:26px;cursor:pointer;transition:0.3s;}
+        .toggle-slider:before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:white;border-radius:50%;transition:0.3s;}
+        .toggle input:checked + .toggle-slider{background:var(--cyan);}
+        .toggle input:checked + .toggle-slider:before{transform:translateX(22px);}
+
+        ::-webkit-scrollbar{width:6px;height:6px;}
+        ::-webkit-scrollbar-track{background:var(--bg);}
+        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo" onclick="window.switchTab('meshes')">The <span>Vault</span></div>
-    <div class="auth-btns" id="auth-ui">
+    <div class="header-right" id="auth-ui">
         <button class="btn-user" onclick="window.openModal()">Login / Sign Up</button>
     </div>
 </header>
+
+<div id="preview-banner">
+    👁️ Previewing as a regular user
+    <button onclick="window.exitPreview()">Exit Preview</button>
+</div>
 
 <div class="tab-bar">
     <button class="tab-btn active" data-tab="meshes">🧱 Meshes</button>
     <button class="tab-btn" data-tab="movesets">⚔️ Movesets</button>
     <button class="tab-btn" data-tab="tutorials">📺 Tutorials</button>
     <button class="tab-btn" data-tab="sounds">🔊 Sounds</button>
-    <button class="tab-btn" id="admin-tab-btn" data-tab="admin">🛡️ Admin Panel</button>
+    <button class="tab-btn" id="admin-tab-btn" data-tab="admin">🛡️ Admin</button>
 </div>
 
-<div class="tab-panel active" id="tab-meshes">
+<div class="tab-panel" id="tab-meshes">
     <div class="cards-grid" id="mesh-grid"></div>
     <div class="upload-box" id="mesh-upload">
-        <h3>Submit Mesh</h3>
+        <h3>🧱 Submit Mesh</h3>
         <input id="m-name" placeholder="Item Name">
-        <input id="m-id" placeholder="Roblox Asset ID">
-        <button class="btn-main" onclick="window.submitItem('meshes')">Post to Vault</button>
+        <input id="m-username" placeholder="Your Roblox Username (optional)">
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">
+            <div style="flex:1;">
+                <input id="m-id" placeholder="Roblox Asset ID (for thumbnail)" oninput="window.onAssetIdInput()" style="margin-bottom:0;">
+            </div>
+            <img id="m-thumb-preview" src="" alt="Preview"
+                 style="display:none;width:80px;height:80px;object-fit:cover;border-radius:10px;border:2px solid var(--border);flex-shrink:0;"
+                 onerror="this.style.display='none'">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+            <input id="m-meshid" placeholder="Mesh ID *required*" style="margin-bottom:0;">
+            <input id="m-texid" placeholder="Texture ID *required*" style="margin-bottom:0;">
+        </div>
+        <button class="btn-main" style="background:var(--cyan);color:black;" onclick="window.submitItem('meshes')">Post to Vault</button>
     </div>
 </div>
 
 <div class="tab-panel" id="tab-movesets">
     <div class="cards-grid" id="moveset-grid"></div>
     <div class="upload-box" id="moveset-upload">
-        <h3>Submit Moveset</h3>
+        <h3>⚔️ Submit Moveset</h3>
         <input id="mv-name" placeholder="Moveset Name">
-        <textarea id="mv-code" placeholder="Paste Code Here" style="height:100px;"></textarea>
-        <button class="btn-main" style="background:var(--pink)" onclick="window.submitItem('movesets')">Post Moveset</button>
+        <textarea id="mv-code" placeholder="Paste Code Here" style="height:120px;resize:vertical;"></textarea>
+        <button class="btn-main" style="background:var(--pink);color:black;" onclick="window.submitItem('movesets')">Post Moveset</button>
     </div>
 </div>
 
 <div class="tab-panel" id="tab-tutorials">
     <div class="cards-grid" id="tutorial-grid"></div>
     <div class="upload-box" id="tutorial-upload">
-        <h3 style="color:var(--yellow)">Add Official Tutorial</h3>
+        <h3 style="color:var(--yellow)">📺 Add Tutorial</h3>
         <input id="t-name" placeholder="Video Title">
         <input id="t-url" placeholder="YouTube URL">
-        <button class="btn-main" style="background:var(--yellow)" onclick="window.submitItem('tutorials')">Add Video</button>
+        <button class="btn-main" style="background:var(--yellow);color:black;" onclick="window.submitItem('tutorials')">Add Video</button>
     </div>
 </div>
 
 <div class="tab-panel" id="tab-sounds">
     <div class="cards-grid" id="sound-grid"></div>
     <div class="upload-box" id="sound-upload">
-        <h3>Submit Sound FX</h3>
+        <h3>🔊 Submit Sound FX</h3>
         <input id="s-name" placeholder="Sound Name">
         <input id="s-id" placeholder="Roblox Audio ID">
-        <button class="btn-main" style="background:var(--green)" onclick="window.submitItem('sounds')">Post Sound</button>
+        <button class="btn-main" style="background:var(--green);color:black;" onclick="window.submitItem('sounds')">Post Sound</button>
     </div>
 </div>
 
 <div class="tab-panel" id="tab-admin">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;font-family:'Fredoka One';color:var(--purple);">🛡️ Admin Panel</h2>
+        <button class="btn-user" style="background:var(--purple);border-color:var(--purple);" onclick="window.enterPreview()">👁️ Preview as User</button>
+    </div>
+
     <div class="stat-grid">
-        <div class="stat-box"><span class="stat-num" id="stat-total">0</span><small>Total Approved</small></div>
-        <div class="stat-box"><span class="stat-num" id="stat-pending" style="color:var(--yellow)">0</span><small>Pending Approval</small></div>
-        <div class="stat-box"><span class="stat-num" id="stat-users" style="color:var(--pink)">0</span><small>Total Users</small></div>
+        <div class="stat-box"><span class="stat-num" id="stat-total">0</span><small>Approved</small></div>
+        <div class="stat-box"><span class="stat-num" id="stat-pending" style="color:var(--yellow)">0</span><small>Pending</small></div>
+        <div class="stat-box"><span class="stat-num" id="stat-users" style="color:var(--pink)">0</span><small>Users</small></div>
+        <div class="stat-box"><span class="stat-num" id="stat-banned" style="color:var(--red)">0</span><small>Banned</small></div>
     </div>
 
     <div class="admin-section">
-        <h3>⏳ Pending Approval Queue</h3>
-        <div id="pending-list"></div>
+        <h3>⏳ Pending Approval</h3>
+        <div id="pending-list"><p style="color:var(--muted)">Loading...</p></div>
+    </div>
+
+    <div class="admin-section">
+        <h3>
+            📦 All Content
+            <select id="content-filter" onchange="window.renderContentTable()" style="width:auto;margin:0;padding:6px 12px;font-size:0.8rem;">
+                <option value="all">All Types</option>
+                <option value="meshes">Meshes</option>
+                <option value="movesets">Movesets</option>
+                <option value="tutorials">Tutorials</option>
+                <option value="sounds">Sounds</option>
+            </select>
+        </h3>
+        <div style="overflow-x:auto;">
+            <table class="content-table">
+                <thead>
+                    <tr>
+                        <th>Name</th><th>Type</th><th>Uploader</th><th>Status</th><th>Posted</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="content-table-body">
+                    <tr><td colspan="6" style="color:var(--muted);text-align:center;padding:2rem;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="admin-section">
@@ -126,11 +226,33 @@
     </div>
 
     <div class="admin-section">
-        <h3>⚙️ Global Settings</h3>
-        <div style="display:flex; align-items:center; gap:15px;">
-            <input type="checkbox" id="setting-approval" style="width:20px; margin:0;" onchange="window.updateSetting('requireApproval', this.checked)">
-            <label for="setting-approval">Require Admin Approval for new posts</label>
+        <h3>🎬 Tutorial Uploaders</h3>
+        <p style="color:var(--muted);font-size:0.85rem;margin:0 0 1rem;">Only these users (plus you) can submit tutorials. Grant or revoke access per user.</p>
+        <div id="trusted-uploaders-list"></div>
+    </div>
+
+    <div class="admin-section">
+        <h3>⚙️ Settings</h3>
+        <div class="setting-row">
+            <label>Require approval for new posts</label>
+            <label class="toggle">
+                <input type="checkbox" id="setting-approval" onchange="window.updateSetting('requireApproval', this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
         </div>
+
+
+    </div>
+</div>
+
+
+<div class="modal" id="name-modal">
+    <div class="modal-content">
+        <h2>✏️ Change Display Name</h2>
+        <p style="color:var(--muted);font-size:0.85rem;margin:0 0 1rem;">This is your Roblox username shown on your uploads.</p>
+        <input type="text" id="new-display-name" placeholder="Roblox Username" maxlength="40">
+        <button class="btn-main" style="background:var(--cyan);color:black;" onclick="window.saveDisplayName()">Save Name</button>
+        <button onclick="window.closeNameModal()" style="margin-top:12px;background:none;border:none;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
     </div>
 </div>
 
@@ -139,15 +261,16 @@
         <h2>Vault Access</h2>
         <input type="email" id="auth-email" placeholder="Email">
         <input type="password" id="auth-pass" placeholder="Password">
-        <button class="btn-main" onclick="window.handleAuth('login')">Login</button>
-        <button class="btn-main" style="background:var(--surface); color:white; margin-top:10px;" onclick="window.handleAuth('signup')">Create Account</button>
-        <button onclick="window.closeModal()" style="margin-top:15px; background:none; border:none; color:var(--muted); cursor:pointer;">Cancel</button>
+        <input type="text" id="auth-username" placeholder="Display Name (optional — shown on uploads)">
+        <button class="btn-main" style="background:var(--cyan);color:black;" onclick="window.handleAuth('login')">Login</button>
+        <button class="btn-main" style="background:var(--surface);color:white;margin-top:10px;" onclick="window.handleAuth('signup')">Create Account</button>
+        <button onclick="window.closeModal()" style="margin-top:15px;background:none;border:none;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, deleteDoc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, doc, deleteDoc, updateDoc, getDoc, getDocs, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -163,164 +286,620 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     const ADMIN_UID = "6eMRv5PgObXsKys66yNzOYRLWGp2";
-    let currentUser = null;
 
-    // --- UTILITIES ---
+    let currentUser = null;
+    let isPreviewMode = false;
+    let allContentCache = [];
+    let displayNameCache = {}; // uid -> robloxUsername or "User#XXXX"
+    let gridUnsubscribers = [];
+
+    // ── THUMBNAIL PREVIEW ──────────────────────────────────────────────
+    // Roblox thumbnails API is public — no scraping needed, just compose the URL.
+    // Called when asset ID field changes to show a live preview in the form.
+    window.onAssetIdInput = () => {
+        const assetId = document.getElementById('m-id').value.trim();
+        const preview = document.getElementById('m-thumb-preview');
+        if (!preview) return;
+        if (!assetId || assetId.length < 4) { preview.style.display = 'none'; return; }
+        preview.style.display = 'block';
+        preview.src = `https://thumbnails.roblox.com/v1/assets?assetIds=${assetId}&size=420x420&format=Png`;
+    };
+
+    // Copy feedback
+    function showCopied(btn, label) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✅ Copied!';
+        setTimeout(() => btn.innerHTML = orig, 1500);
+    }
+
+    // ── UTILS ──────────────────────────────────────────────────────────
     window.openModal = () => document.getElementById('auth-modal').classList.add('show');
     window.closeModal = () => document.getElementById('auth-modal').classList.remove('show');
     window.handleLogout = () => signOut(auth).then(() => location.reload());
 
-    window.switchTab = (tabId) => {
-        document.querySelectorAll('.tab-btn, .tab-panel').forEach(el => el.classList.remove('active'));
-        document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-        document.getElementById('tab-' + tabId).classList.add('active');
+    window.openNameModal = () => {
+        const input = document.getElementById('new-display-name');
+        if (input && currentUser) input.value = displayNameCache[currentUser.uid]?.startsWith('User#') ? '' : (displayNameCache[currentUser.uid] || '');
+        document.getElementById('name-modal').classList.add('show');
+        setTimeout(() => input?.focus(), 100);
+    };
+    window.closeNameModal = () => document.getElementById('name-modal').classList.remove('show');
+    window.saveDisplayName = async () => {
+        const name = document.getElementById('new-display-name').value.trim();
+        if (!name) { alert('Please enter a name.'); return; }
+        if (name.length > 40) { alert('Name too long (max 40 characters).'); return; }
+        await updateDoc(doc(db, 'users', currentUser.uid), { robloxUsername: name });
+        displayNameCache[currentUser.uid] = name;
+        window.closeNameModal();
+        refreshHeaderUI(currentUser);
     };
 
-    // --- AUTH ---
-    window.handleAuth = async (type) => {
-        const email = document.getElementById('auth-email').value;
-        const pass = document.getElementById('auth-pass').value;
+    function esc(str = '') {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function getYTId(url = '') {
         try {
-            if(type === 'signup') {
+            const u = new URL(url);
+            if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0];
+            return u.searchParams.get('v') || '';
+        } catch { return url.split('/').pop().split('?')[0]; }
+    }
+
+    function timeAgo(ts) {
+        if (!ts) return '';
+        const s = Math.floor((Date.now() - ts) / 1000);
+        if (s < 60) return 'just now';
+        if (s < 3600) return Math.floor(s/60) + 'm ago';
+        if (s < 86400) return Math.floor(s/3600) + 'h ago';
+        return Math.floor(s/86400) + 'd ago';
+    }
+
+    async function fetchDisplayName(uid) {
+        if (!uid || displayNameCache[uid]) return;
+        try {
+            const s = await getDoc(doc(db, "users", uid));
+            const d = s.exists() ? s.data() : {};
+            displayNameCache[uid] = d.robloxUsername || ('User#' + uid.slice(-4).toUpperCase());
+        } catch { displayNameCache[uid] = 'User#????'; }
+    }
+
+    // ── TAB SWITCHING ──────────────────────────────────────────────────
+    window.switchTab = (tabId) => {
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(el => { el.style.display = 'none'; });
+        const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+        if (btn) btn.classList.add('active');
+        const panel = document.getElementById('tab-' + tabId);
+        if (panel) { panel.style.display = 'block'; panel.style.animation = 'fadeIn 0.25s ease'; }
+    };
+
+    // ── PREVIEW MODE ───────────────────────────────────────────────────
+    window.enterPreview = () => {
+        isPreviewMode = true;
+        document.getElementById('preview-banner').style.display = 'block';
+        document.getElementById('admin-tab-btn').style.display = 'none';
+        // Hide upload forms
+        document.querySelectorAll('.upload-box').forEach(el => el.style.display = 'none');
+        // Hide admin overlays on cards without re-fetching data
+        document.querySelectorAll('.admin-card-actions').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.uploader-tag').forEach(el => el.style.display = 'none');
+        window.switchTab('meshes');
+    };
+
+    window.exitPreview = () => {
+        isPreviewMode = false;
+        document.getElementById('preview-banner').style.display = 'none';
+        document.getElementById('admin-tab-btn').style.display = 'block';
+        // Restore upload forms (tutorial respects trusted-uploader rules)
+        document.querySelectorAll('.upload-box').forEach(el => {
+            if (el.id === 'tutorial-upload') return; // leave as-is, controlled by auth
+            el.style.display = 'block';
+        });
+        // Restore admin overlays
+        document.querySelectorAll('.admin-card-actions').forEach(el => el.style.display = 'flex');
+        document.querySelectorAll('.uploader-tag').forEach(el => el.style.display = 'inline-flex');
+        window.switchTab('admin');
+    };
+
+    // ── AUTH ───────────────────────────────────────────────────────────
+    window.handleAuth = async (type) => {
+        const email = document.getElementById('auth-email').value.trim();
+        const pass = document.getElementById('auth-pass').value;
+        if (!pass) { alert('Password is required.'); return; }
+        if (!email) { alert('Email is required by Firebase — it will never be shown publicly.'); return; }
+        try {
+            if (type === 'signup') {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "users", res.user.uid), { email, isBanned: false });
-            } else { await signInWithEmailAndPassword(auth, email, pass); }
+                const robloxUsername = (document.getElementById('auth-username')?.value || '').trim();
+                // Store email internally for admin use only — never displayed publicly
+                await setDoc(doc(db, "users", res.user.uid), { email, isBanned: false, createdAt: Date.now(), robloxUsername });
+            } else {
+                await signInWithEmailAndPassword(auth, email, pass);
+            }
             window.closeModal();
         } catch(e) { alert(e.message); }
     };
+
+    function refreshHeaderUI(user) {
+        if (!user) return;
+        const isAdmin = user.uid === ADMIN_UID;
+        const myName = displayNameCache[user.uid] || '';
+        const ui = document.getElementById('auth-ui');
+        let html = '<button class="btn-user" onclick="window.openNameModal()" style="font-size:0.8rem;opacity:0.8;" title="Change display name">'
+                 + '\uD83D\uDC64 ' + esc(myName || 'Set Display Name') + ' \u270F\uFE0F'
+                 + '</button>';
+        if (isAdmin) html += '<button class="btn-user" onclick="window.switchTab(&quot;admin&quot;)" style="background:var(--purple);border-color:var(--purple);">\uD83D\uDEE1\uFE0F Admin</button>';
+        html += '<button class="btn-user" onclick="window.handleLogout()">Logout</button>';
+        ui.innerHTML = html;
+    }
 
     onAuthStateChanged(auth, async (user) => {
         currentUser = user;
         const ui = document.getElementById('auth-ui');
         const adminBtn = document.getElementById('admin-tab-btn');
-        const uploads = document.querySelectorAll('.upload-box');
 
-        if(user) {
-            const userSnap = await getDoc(doc(db, "users", user.uid));
-            if(userSnap.exists() && userSnap.data().isBanned) { alert("You are banned."); signOut(auth); return; }
+        if (user) {
+            let userSnap;
+            try { userSnap = await getDoc(doc(db, "users", user.uid)); } catch(e) { userSnap = null; }
+            const userData = userSnap?.exists() ? userSnap.data() : {};
+            if (userData.isBanned) { alert("You are banned from The Vault."); signOut(auth); return; }
+            // Auto-create user doc if missing (e.g. older accounts)
+            if (!userSnap?.exists()) {
+                await setDoc(doc(db, "users", user.uid), { email: user.email || '', isBanned: false, createdAt: Date.now(), robloxUsername: '' });
+            }
 
-            uploads.forEach(box => {
-                if(box.id === 'tutorial-upload') box.style.display = (user.uid === ADMIN_UID) ? 'block' : 'none';
-                else box.style.display = 'block';
+            const isAdmin = user.uid === ADMIN_UID;
+
+            // Pre-fetch own display name so header renders correctly
+            await fetchDisplayName(user.uid);
+
+            // Check if user is allowed to upload tutorials
+            const settingsSnap = await getDoc(doc(db, 'settings', 'config'));
+            const trustedUploaders = (settingsSnap.exists() ? settingsSnap.data().trustedUploaders : null) || [];
+            const canUploadTutorials = isAdmin || trustedUploaders.includes(user.uid);
+
+            document.querySelectorAll('.upload-box').forEach(box => {
+                if (box.id === 'tutorial-upload') {
+                    box.style.display = canUploadTutorials ? 'block' : 'none';
+                } else {
+                    box.style.display = 'block';
+                }
             });
 
-            if(user.uid === ADMIN_UID) {
+            if (isAdmin) {
                 adminBtn.style.display = 'block';
                 loadAdminDash();
             }
 
-            ui.innerHTML = `
-                <span style="font-size:0.7rem; opacity:0.5; margin-right:10px;">${user.email}</span>
-                ${user.uid === ADMIN_UID ? '<button class="btn-user" onclick="window.switchTab(\'admin\')" style="background:var(--purple); border-color:var(--purple)">Admin Dash</button>' : ''}
-                <button class="btn-user" onclick="window.handleLogout()">Logout</button>
-            `;
+            refreshHeaderUI(user);
+
+            renderAllGrids(isAdmin && !isPreviewMode);
         } else {
-            uploads.forEach(box => box.style.display = 'none');
+            document.querySelectorAll('.upload-box').forEach(box => box.style.display = 'none');
             adminBtn.style.display = 'none';
             ui.innerHTML = `<button class="btn-user" onclick="window.openModal()">Login / Sign Up</button>`;
+            renderAllGrids(false);
         }
     });
 
-    // --- CONTENT ENGINE ---
+    // ── SUBMIT ─────────────────────────────────────────────────────────
     window.submitItem = async (type) => {
-        const config = (await getDoc(doc(db, "settings", "config"))).data() || { requireApproval: false };
+        if (!currentUser) { alert('Please log in first.'); return; }
+        const configSnap = await getDoc(doc(db, "settings", "config"));
+        const config = configSnap.exists() ? configSnap.data() : { requireApproval: false };
+        const isAdmin = currentUser.uid === ADMIN_UID;
+
         const data = {
             userId: currentUser.uid,
             createdAt: Date.now(),
-            status: (currentUser.uid === ADMIN_UID || !config.requireApproval) ? 'approved' : 'pending'
+            status: (isAdmin || !config.requireApproval) ? 'approved' : 'pending'
         };
 
-        if(type === 'meshes') { data.name = document.getElementById('m-name').value; data.assetId = document.getElementById('m-id').value; }
-        if(type === 'movesets') { data.name = document.getElementById('mv-name').value; data.code = document.getElementById('mv-code').value; }
-        if(type === 'tutorials') { 
-            const url = document.getElementById('t-url').value;
-            data.name = document.getElementById('t-name').value;
+        if (type === 'meshes') {
+            data.name = document.getElementById('m-name').value.trim();
+            data.assetId = document.getElementById('m-id').value.trim();
+            data.robloxUsername = document.getElementById('m-username').value.trim();
+            data.meshId = document.getElementById('m-meshid').value.trim();
+            data.textureId = document.getElementById('m-texid').value.trim();
+            if (!data.name) { alert('Please enter an item name.'); return; }
+            if (!data.meshId) { alert('Mesh ID is required.'); document.getElementById('m-meshid').focus(); return; }
+            if (!data.textureId) { alert('Texture ID is required.'); document.getElementById('m-texid').focus(); return; }
+        } else if (type === 'movesets') {
+            data.name = document.getElementById('mv-name').value.trim();
+            data.code = document.getElementById('mv-code').value;
+            if (!data.name) { alert('Please fill in a name.'); return; }
+        } else if (type === 'tutorials') {
+            const url = document.getElementById('t-url').value.trim();
+            data.name = document.getElementById('t-name').value.trim();
             data.url = url;
-            data.assetId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop(); 
+            data.assetId = getYTId(url);
+            if (!data.name || !data.assetId) { alert('Please fill in the title and a valid YouTube URL.'); return; }
+        } else if (type === 'sounds') {
+            data.name = document.getElementById('s-name').value.trim();
+            data.assetId = document.getElementById('s-id').value.trim();
+            if (!data.name || !data.assetId) { alert('Please fill in name and audio ID.'); return; }
         }
-        if(type === 'sounds') { data.name = document.getElementById('s-name').value; data.assetId = document.getElementById('s-id').value; }
 
         await addDoc(collection(db, type), data);
-        alert(data.status === 'pending' ? "Submitted for approval!" : "Post live!");
-        location.reload();
+        alert(data.status === 'pending' ? '⏳ Submitted for approval!' : '✅ Now live in the Vault!');
+        document.querySelectorAll(`#tab-${type} input, #tab-${type} textarea`).forEach(el => el.value = '');
     };
 
-    const syncGrid = (colName, gridId, templateFn) => {
-        onSnapshot(query(collection(db, colName), where("status", "==", "approved"), orderBy("createdAt", "desc")), (snap) => {
-            document.getElementById(gridId).innerHTML = snap.docs.map(d => templateFn({id: d.id, ...d.data()})).join('');
+    // ── GRID RENDERING ─────────────────────────────────────────────────
+    function renderAllGrids(showAdminInfo) {
+        gridUnsubscribers.forEach(u => u());
+        gridUnsubscribers = [];
+
+        const grids = [
+            { col: "meshes",    gridId: "mesh-grid",     fn: meshCard     },
+            { col: "movesets",  gridId: "moveset-grid",  fn: movesetCard  },
+            { col: "tutorials", gridId: "tutorial-grid", fn: tutorialCard },
+            { col: "sounds",    gridId: "sound-grid",    fn: soundCard    },
+        ];
+
+        grids.forEach(({ col, gridId, fn }) => {
+            const q = query(collection(db, col), where("status", "==", "approved"), orderBy("createdAt", "desc"));
+            const unsub = onSnapshot(q, async (snap) => {
+                const grid = document.getElementById(gridId);
+                if (!grid) return;
+
+                if (snap.empty) {
+                    grid.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>Nothing here yet. Be the first!</p></div>`;
+                    return;
+                }
+
+                // Pre-fetch display names
+                const uids = [...new Set(snap.docs.map(d => d.data().userId).filter(Boolean))];
+                await Promise.all(uids.map(fetchDisplayName));
+
+                grid.innerHTML = snap.docs.map(d => {
+                    const item = { id: d.id, ...d.data() };
+                    const uploaderName = displayNameCache[item.userId] || null;
+                    return fn(item, uploaderName, showAdminInfo);
+                }).join('');
+
+            }, err => console.error('Grid snapshot error:', col, err));
+
+            gridUnsubscribers.push(unsub);
         });
+    }
+
+    // ── CARD TEMPLATES ──────────────────────────────────────────────────
+    function adminOverlay(type, id) {
+        return `<div class="admin-card-actions">
+            <button style="background:var(--red);color:white;" onclick="window.quickDelete('${type}','${id}')">🗑 Delete</button>
+            <button style="background:var(--yellow);color:black;" onclick="window.modItem('${type}','${id}','approved')">✓ Re-approve</button>
+        </div>`;
+    }
+
+    function uploaderBadge(name) {
+        return name ? `<span class="uploader-tag">👤 ${esc(name)}</span>` : '';
+    }
+
+    function copyBtn(label, value, color='var(--cyan)', textColor='black') {
+        if (!value) return '';
+        const safe = value.replace(/'/g, "\'");
+        return `<button class="btn-copy" style="background:${color};color:${textColor};"
+            onclick="navigator.clipboard.writeText('rbxassetid://${safe}').then(()=>showCopied(this,'${label}'))">
+            📋 ${label}
+        </button>`;
+    }
+
+    function meshCard(m, uploaderName, isAdmin) {
+        const hasIds = m.meshId || m.textureId;
+        return `<div class="card">
+            <div class="thumb">
+                <img src="https://thumbnails.roblox.com/v1/assets?assetIds=${esc(m.assetId)}&size=420x420&format=Png"
+                     alt="${esc(m.name)}"
+                     onerror="this.src='https://placehold.co/420x420/211f32/7a758f?text=No+Preview'">
+            </div>
+            <div class="card-body">
+                <p class="card-title">${esc(m.name)}</p>
+                <span class="card-meta">Asset: ${esc(m.assetId)} · ${timeAgo(m.createdAt)}</span>
+                ${uploaderBadge(uploaderName)}
+                <div class="copy-row">
+                    ${copyBtn('Mesh ID', m.meshId, 'var(--cyan)', 'black')}
+                    ${copyBtn('Texture ID', m.textureId, 'var(--purple)', 'white')}
+                    ${!hasIds ? copyBtn('Asset ID', m.assetId, 'var(--surface)', 'var(--muted)') : ''}
+                </div>
+                ${!m.meshId && !m.textureId ? `<span style="font-size:0.72rem;color:var(--muted);">⚠️ Legacy entry — IDs not recorded</span>` : ''}
+                ${isAdmin ? adminOverlay('meshes', m.id) : ''}
+            </div>
+        </div>`;
+    }
+
+    function movesetCard(m, uploaderName, isAdmin) {
+        const safeCode = esc(m.code || '');
+        const codeJson = JSON.stringify(m.code || '');
+        return `<div class="card">
+            <div class="thumb" style="background:linear-gradient(135deg,#1a1826,#0f0e17);flex-direction:column;gap:8px;">
+                <div style="font-size:2.5rem;">⚔️</div>
+                <div style="font-size:0.8rem;color:var(--pink);font-weight:800;">${esc(m.name)}</div>
+            </div>
+            <div class="card-body">
+                <p class="card-title">${esc(m.name)}</p>
+                <span class="card-meta">${timeAgo(m.createdAt)}</span>
+                ${uploaderBadge(uploaderName)}
+                <div class="code-block">${safeCode}</div>
+                <button class="btn-main" style="background:var(--pink);color:black;"
+                    onclick="navigator.clipboard.writeText(${codeJson}).then(()=>alert('✅ Code copied!'))">Copy Code</button>
+                ${isAdmin ? adminOverlay('movesets', m.id) : ''}
+            </div>
+        </div>`;
+    }
+
+    function tutorialCard(t, uploaderName, isAdmin) {
+        const vid = t.assetId || getYTId(t.url || '');
+        const uid = `tcard-${t.id}`;
+        return `<div class="card">
+            <div class="thumb" id="${uid}" style="cursor:pointer;position:relative;"
+                 onclick="document.getElementById('${uid}').innerHTML='<iframe src=\\'https://www.youtube.com/embed/${vid}?autoplay=1\\' allow=\\'autoplay;encrypted-media\\' allowfullscreen style=\\'width:100%;height:100%;border:none;\\'></iframe>'">
+                <img src="https://img.youtube.com/vi/${vid}/hqdefault.jpg" alt="${esc(t.name)}"
+                     style="width:100%;height:100%;object-fit:cover;"
+                     onerror="this.parentElement.style.background='#1a1826';this.style.display='none'">
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);">
+                    <div style="width:56px;height:56px;background:#ff0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 20px rgba(255,0,0,0.4);">▶</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="card-title">${esc(t.name)}</p>
+                <span class="card-meta">${timeAgo(t.createdAt)}</span>
+                ${uploaderBadge(uploaderName)}
+                <a href="${esc(t.url)}" target="_blank" rel="noopener" style="color:var(--cyan);font-size:0.85rem;text-decoration:none;">Open on YouTube ↗</a>
+                ${isAdmin ? adminOverlay('tutorials', t.id) : ''}
+            </div>
+        </div>`;
+    }
+
+    function soundCard(s, uploaderName, isAdmin) {
+        return `<div class="card">
+            <div class="thumb"><div class="sound-icon">🔊</div></div>
+            <div class="card-body">
+                <p class="card-title">${esc(s.name)}</p>
+                <span class="card-meta">Audio ID: ${esc(s.assetId)} · ${timeAgo(s.createdAt)}</span>
+                ${uploaderBadge(uploaderName)}
+                <button class="btn-main" style="background:var(--green);color:black;"
+                    onclick="navigator.clipboard.writeText('rbxassetid://${esc(s.assetId)}').then(()=>alert('✅ Audio ID copied!'))">Copy Audio ID</button>
+                ${isAdmin ? adminOverlay('sounds', s.id) : ''}
+            </div>
+        </div>`;
+    }
+
+    // ── QUICK DELETE FROM CARD ──────────────────────────────────────────
+    window.quickDelete = async (col, id) => {
+        if (!confirm('Delete this item permanently?')) return;
+        await deleteDoc(doc(db, col, id));
     };
 
-    syncGrid("meshes", "mesh-grid", (m) => `
-        <div class="card">
-            <div class="thumb"><img src="https://thumbnails.roblox.com/v1/assets?assetIds=${m.assetId}&size=420x420&format=Png"></div>
-            <div class="card-body">
-                <strong>${m.name}</strong>
-                <button class="btn-main" onclick="navigator.clipboard.writeText('rbxassetid://${m.assetId}'); alert('Copied ID')">Copy Mesh ID</button>
-            </div>
-        </div>
-    `);
-    // ... Add syncGrid for other types ...
-
-    // --- ADMIN PANEL LOGIC ---
+    // ── ADMIN DASHBOARD ────────────────────────────────────────────────
     function loadAdminDash() {
-        // Pending List
-        const types = ['meshes', 'movesets', 'sounds'];
-        let pendingCount = 0;
-        document.getElementById('pending-list').innerHTML = '';
+        const types = ['meshes', 'movesets', 'sounds', 'tutorials'];
+        const pendingCounts = { meshes:0, movesets:0, sounds:0, tutorials:0 };
+        const approvedCounts = { meshes:0, movesets:0, sounds:0, tutorials:0 };
+        const pendingItemsMap = {};
+
+        const updateStats = () => {
+            document.getElementById('stat-pending').innerText = Object.values(pendingCounts).reduce((a,b)=>a+b,0);
+            document.getElementById('stat-total').innerText = Object.values(approvedCounts).reduce((a,b)=>a+b,0);
+        };
+
+        const renderPendingList = () => {
+            const list = document.getElementById('pending-list');
+            const all = Object.entries(pendingItemsMap).flatMap(([type, docs]) => docs.map(d => ({type,...d})));
+            if (all.length === 0) {
+                list.innerHTML = '<p style="color:var(--muted)">✅ Nothing pending — all clear!</p>';
+                return;
+            }
+            list.innerHTML = all.map(item => `
+                <div class="q-item">
+                    <div class="q-item-info">
+                        <span class="q-item-name">${esc(item.name)}</span>
+                        <span class="q-item-sub">
+                            <strong style="color:var(--cyan)">${item.type.toUpperCase()}</strong>
+                            &nbsp;·&nbsp;${timeAgo(item.createdAt)}
+                            &nbsp;·&nbsp;👤 ${esc(displayNameCache[item.userId] || 'Unknown')}
+                        </span>
+                    </div>
+                    <div class="q-actions">
+                        <button class="btn-user" style="background:var(--green);color:black;" onclick="window.modItem('${item.type}','${item.id}','approved')">✓ Approve</button>
+                        <button class="btn-user" style="background:var(--red);" onclick="window.modItem('${item.type}','${item.id}','delete')">✕ Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        };
 
         types.forEach(type => {
-            onSnapshot(query(collection(db, type), where("status", "==", "pending")), (snap) => {
-                pendingCount += snap.size;
-                document.getElementById('stat-pending').innerText = pendingCount;
-                snap.forEach(d => {
-                    const item = d.data();
-                    const el = document.createElement('div');
-                    el.className = 'q-item';
-                    el.innerHTML = `
-                        <span>[${type.toUpperCase()}] ${item.name}</span>
-                        <div>
-                            <button class="btn-user" style="background:var(--green); color:black" onclick="window.modItem('${type}','${d.id}','approved')">Approve</button>
-                            <button class="btn-user" style="background:var(--red)" onclick="window.modItem('${type}','${d.id}','delete')">Delete</button>
-                        </div>
-                    `;
-                    document.getElementById('pending-list').appendChild(el);
-                });
+            // Pending listener
+            onSnapshot(query(collection(db, type), where("status","==","pending")), async (snap) => {
+                pendingCounts[type] = snap.size;
+                const uids = [...new Set(snap.docs.map(d => d.data().userId).filter(Boolean))];
+                await Promise.all(uids.map(fetchDisplayName));
+                pendingItemsMap[type] = snap.docs.map(d => ({id:d.id,...d.data()}));
+                updateStats();
+                renderPendingList();
+            });
+
+            // Approved count listener
+            onSnapshot(query(collection(db, type), where("status","==","approved")), (snap) => {
+                approvedCounts[type] = snap.size;
+                updateStats();
+            });
+
+            // All content listener (for content manager table)
+            onSnapshot(query(collection(db, type), orderBy("createdAt","desc")), async (snap) => {
+                const uids = [...new Set(snap.docs.map(d => d.data().userId).filter(Boolean))];
+                await Promise.all(uids.map(fetchDisplayName));
+                const newItems = snap.docs.map(d => ({_type:type, id:d.id, ...d.data()}));
+                allContentCache = allContentCache.filter(c => c._type !== type).concat(newItems);
+                window.renderContentTable();
             });
         });
 
-        // User List
+        // Users listener
         onSnapshot(collection(db, "users"), (snap) => {
+            const users = snap.docs.map(d => ({id:d.id,...d.data()}));
+            users.forEach(u => { displayNameCache[u.id] = u.robloxUsername || ('User#' + u.id.slice(-4).toUpperCase()); });
+            _allUsers = users;
+            renderTrustedUploaders(_allUsers, _trustedList);
+            const banned = users.filter(u => u.isBanned).length;
             document.getElementById('stat-users').innerText = snap.size;
-            document.getElementById('user-list').innerHTML = snap.docs.map(d => `
+            document.getElementById('stat-banned').innerText = banned;
+            document.getElementById('user-list').innerHTML = users.map(u => `
                 <div class="q-item">
-                    <span>${d.data().email} ${d.data().isBanned ? '🚫' : '✅'}</span>
-                    <button class="btn-user" style="background:var(--red)" onclick="window.toggleBan('${d.id}', ${!d.data().isBanned})">
-                        ${d.data().isBanned ? 'Unban' : 'Ban'}
-                    </button>
+                    <div class="q-item-info">
+                        <span class="q-item-name">${u.robloxUsername ? esc(u.robloxUsername) : '<em style="color:var(--muted)">No display name set</em>'}</span>
+                        <span class="q-item-sub">
+                            <span style='color:var(--muted);font-size:0.7rem;'>🔒 ${esc(u.email || 'no email')} · …${u.id.slice(-6)}</span>
+                            ${u.isBanned ? ' · 🚫 Banned' : ' · ✅ Active'}
+                        </span>
+                    </div>
+                    ${u.id !== ADMIN_UID
+                        ? `<div class="q-actions">
+                            <button class="btn-user"
+                                style="background:${u.isBanned ? 'var(--green)' : 'var(--red)'};color:${u.isBanned ? 'black' : 'white'};"
+                                onclick="window.toggleBan('${u.id}',${!u.isBanned})">
+                                ${u.isBanned ? 'Unban' : 'Ban'}
+                            </button>
+                            <button class="btn-user" style="background:var(--surface);border-color:var(--red);color:var(--red);"
+                                onclick="window.deleteUserAccount('${u.id}','${esc(u.email || '')}')">
+                                🗑 Delete
+                            </button>
+                           </div>`
+                        : `<span style="color:var(--purple);font-weight:800;">👑 Admin</span>`}
                 </div>
             `).join('');
         });
 
-        // Settings
+        // Trusted uploaders — re-render whenever users or settings change
+        const renderTrustedUploaders = (users, trustedList) => {
+            const el = document.getElementById('trusted-uploaders-list');
+            if (!el) return;
+            const nonAdmins = users.filter(u => u.id !== ADMIN_UID);
+            if (nonAdmins.length === 0) {
+                el.innerHTML = '<p style="color:var(--muted)">No users yet.</p>';
+                return;
+            }
+            el.innerHTML = nonAdmins.map(u => {
+                const isTrusted = trustedList.includes(u.id);
+                const name = u.robloxUsername || u.email || ('User#' + u.id.slice(-4).toUpperCase());
+                return `<div class="q-item">
+                    <div class="q-item-info">
+                        <span class="q-item-name">${esc(name)}</span>
+                        <span class="q-item-sub">${isTrusted ? '🎬 Can upload tutorials' : '🚫 No tutorial access'}</span>
+                    </div>
+                    <button class="btn-user"
+                        style="background:${isTrusted ? 'var(--red)' : 'var(--green)'};color:${isTrusted ? 'white' : 'black'};"
+                        onclick="window.toggleTrustedUploader('${u.id}', ${!isTrusted})">
+                        ${isTrusted ? 'Revoke' : 'Grant Access'}
+                    </button>
+                </div>`;
+            }).join('');
+        };
+
+        // Keep local copies so both listeners can trigger a re-render
+        let _allUsers = [];
+        let _trustedList = [];
+
+        // Settings listener
         onSnapshot(doc(db, "settings", "config"), (d) => {
-            if(d.exists()) document.getElementById('setting-approval').checked = d.data().requireApproval;
+            if (d.exists()) {
+                document.getElementById('setting-approval').checked = !!d.data().requireApproval;
+                _trustedList = d.data().trustedUploaders || [];
+                renderTrustedUploaders(_allUsers, _trustedList);
+            }
         });
     }
 
-    window.modItem = async (col, id, action) => {
-        if(action === 'approved') await updateDoc(doc(db, col, id), { status: 'approved' });
-        else await deleteDoc(doc(db, col, id));
-        alert("Done!");
+    // ── CONTENT TABLE ───────────────────────────────────────────────────
+    window.renderContentTable = () => {
+        const filterType = document.getElementById('content-filter')?.value || 'all';
+        const items = allContentCache
+            .filter(c => filterType === 'all' || c._type === filterType)
+            .sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+        const tbody = document.getElementById('content-table-body');
+        if (!tbody) return;
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:2rem;">No content found.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = items.map(item => `
+            <tr>
+                <td style="font-weight:700;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(item.name)}">${esc(item.name)}</td>
+                <td><span style="color:var(--cyan);font-size:0.78rem;font-weight:800;">${item._type.toUpperCase()}</span></td>
+                <td style="color:var(--muted);font-size:0.8rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(displayNameCache[item.userId] || '?')}</td>
+                <td><span class="badge ${item.status === 'approved' ? 'badge-approved' : 'badge-pending'}">${item.status}</span></td>
+                <td style="color:var(--muted);font-size:0.8rem;white-space:nowrap;">${timeAgo(item.createdAt)}</td>
+                <td>
+                    <div style="display:flex;gap:6px;flex-wrap:nowrap;">
+                        ${item.status === 'pending'
+                            ? `<button class="btn-user" style="background:var(--green);color:black;padding:5px 10px;font-size:0.75rem;" onclick="window.modItem('${item._type}','${item.id}','approved')">Approve</button>`
+                            : ''}
+                        <button class="btn-user" style="background:var(--red);padding:5px 10px;font-size:0.75rem;" onclick="window.modItem('${item._type}','${item.id}','delete')">Delete</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
     };
 
-    window.toggleBan = async (uid, status) => { await updateDoc(doc(db, "users", uid), { isBanned: status }); };
-    window.updateSetting = async (key, val) => { await setDoc(doc(db, "settings", "config"), { [key]: val }, { merge: true }); };
+    // ── ADMIN ACTIONS ───────────────────────────────────────────────────
+    window.modItem = async (col, id, action) => {
+        if (action === 'delete') {
+            if (!confirm('Permanently delete this item?')) return;
+            await deleteDoc(doc(db, col, id));
+        } else {
+            await updateDoc(doc(db, col, id), { status: action });
+        }
+    };
 
-    // --- TAB CLICKS ---
+    // Delete user account: removes Firestore user doc + all their content
+    window.deleteUserAccount = async (uid, email) => {
+        if (!confirm(`Delete account${email ? ' for ' + email : ''}?\n\nThis will remove their Firestore record and all content they submitted. This cannot be undone.`)) return;
+        const types = ['meshes', 'movesets', 'sounds', 'tutorials'];
+        let deleted = 0;
+        // Delete all their content across collections
+        for (const type of types) {
+            const snap = await getDocs(query(collection(db, type), where('userId', '==', uid)));
+            await Promise.all(snap.docs.map(d => deleteDoc(doc(db, type, d.id))));
+            deleted += snap.size;
+        }
+        // Delete the user Firestore doc
+        await deleteDoc(doc(db, 'users', uid));
+        alert(`✅ Account deleted. Removed ${deleted} content item(s).\n\nNote: Firebase Auth entry must be deleted separately from the Firebase console.`);
+    };
+
+    window.toggleTrustedUploader = async (uid, grant) => {
+        const snap = await getDoc(doc(db, 'settings', 'config'));
+        const current = snap.exists() ? (snap.data().trustedUploaders || []) : [];
+        const updated = grant
+            ? [...new Set([...current, uid])]
+            : current.filter(id => id !== uid);
+        await setDoc(doc(db, 'settings', 'config'), { trustedUploaders: updated }, { merge: true });
+    };
+
+    window.toggleBan = async (uid, status) => {
+        await updateDoc(doc(db, "users", uid), { isBanned: status });
+    };
+
+    window.updateSetting = async (key, val) => {
+        await setDoc(doc(db, "settings", "config"), { [key]: val }, { merge: true });
+    };
+
+    // ── INIT ────────────────────────────────────────────────────────────
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.onclick = () => window.switchTab(btn.dataset.tab);
     });
+
+    // Hide all panels, show meshes
+    document.querySelectorAll('.tab-panel').forEach(el => el.style.display = 'none');
+    document.getElementById('tab-meshes').style.display = 'block';
+
+    // Hide upload forms until auth resolves
+    document.querySelectorAll('.upload-box').forEach(el => el.style.display = 'none');
+
+    // Start rendering grids immediately (no admin info until auth resolves)
+    renderAllGrids(false);
 </script>
 </body>
 </html>
