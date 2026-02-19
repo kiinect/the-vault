@@ -1,242 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>The Vault</title>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>The Vault</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 :root {
   --bg:#0f0e17; --surface:#1a1826; --card:#211f32; --border:#2e2b47;
-  --text:#f0eeff; --muted:#7a758f;
-  --pink:#ff6bcb; --yellow:#ffe566; --cyan:#5ee7ff;
-  --green:#7cff6b; --orange:#ff9a3c; --purple:#b16bff; --red:#ff4466;
+  --text:#f0eeff; --muted:#7a758f; --pink:#ff6bcb; --cyan:#5ee7ff; --green:#7cff6b; --red:#ff4466;
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:
-  radial-gradient(ellipse 600px 400px at 10% 20%,rgba(177,107,255,.07) 0%,transparent 70%),
-  radial-gradient(ellipse 500px 500px at 90% 80%,rgba(255,107,203,.07) 0%,transparent 70%),
-  radial-gradient(ellipse 400px 300px at 50% 50%,rgba(94,231,255,.04) 0%,transparent 70%);
-  pointer-events:none;z-index:0;animation:blobshift 12s ease-in-out infinite alternate;}
-@keyframes blobshift{0%{transform:scale(1) rotate(0deg)}100%{transform:scale(1.05) rotate(2deg)}}
-
-header{position:relative;z-index:10;padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);}
-.logo{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--yellow);text-shadow:3px 3px 0 rgba(255,229,102,.15);}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;margin:0;overflow-x:hidden;}
+header{padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--cyan);}
 .logo span{color:var(--pink);}
-.header-right{display:flex;align-items:center;gap:0.75rem;}
-.header-badge{background:var(--pink);color:#000;font-size:.58rem;font-weight:900;padding:.13rem .5rem;border-radius:99px;text-transform:uppercase;letter-spacing:.08em;animation:pulse 2s ease-in-out infinite;}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.admin-btn{background:rgba(255,229,102,.1);color:var(--yellow);border:2px solid rgba(255,229,102,.25);font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:900;padding:.4rem .9rem;border-radius:9px;cursor:pointer;transition:all .2s;}
-.admin-btn:hover{background:var(--yellow);color:#000;}
 
-.tab-bar{position:sticky;top:0;z-index:20;display:flex;background:var(--surface);border-bottom:2px solid var(--border);overflow-x:auto;}
-.tab-btn{position:relative;padding:.85rem 1.4rem;background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.86rem;font-weight:800;cursor:pointer;white-space:nowrap;transition:color .2s;display:flex;align-items:center;gap:.4rem;}
-.tab-btn.active{color:var(--text);}
-.tab-btn.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:3px;}
-.tab-btn[data-tab="meshes"].active::after{background:var(--cyan);}
-.tab-btn[data-tab="movesets"].active::after{background:var(--pink);}
-.tab-btn[data-tab="tutorials"].active::after{background:var(--yellow);}
-.tab-btn[data-tab="sounds"].active::after{background:var(--green);}
+.auth-btns{display:flex;gap:10px;align-items:center;}
+.btn-user{background:var(--card);border:1px solid var(--border);color:white;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:800;}
+.admin-badge{background:var(--red);color:white;font-size:0.6rem;font-weight:900;padding:2px 6px;border-radius:4px;text-transform:uppercase;}
 
-.tab-panel{display:none;position:relative;z-index:5;padding:2rem;max-width:1300px;margin:0 auto;}
-.tab-panel.active{display:block;animation:fadein .22s ease;}
-@keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.tab-bar{display:flex;background:var(--surface);border-bottom:2px solid var(--border);overflow-x:auto;}
+.tab-btn{padding:1rem 1.5rem;background:none;border:none;color:var(--muted);font-weight:800;cursor:pointer;white-space:nowrap;}
+.tab-btn.active{color:var(--cyan);border-bottom:3px solid var(--cyan);}
 
-.page-title{font-family:'Fredoka One',cursive;font-size:1.9rem;margin-bottom:.2rem;}
-.page-sub{color:var(--muted);font-size:.86rem;margin-bottom:1.5rem;font-weight:600;}
+.tab-panel{display:none;padding:2rem;max-width:1400px;margin:auto;}
+.tab-panel.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-.stats-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.4rem;}
-.stat-pill{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:.5rem 1rem;display:flex;align-items:center;gap:.45rem;font-weight:800;font-size:.8rem;}
-.stat-num{font-family:'Fredoka One',cursive;font-size:1rem;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
 
-.search-row{display:flex;gap:.7rem;margin-bottom:1.4rem;}
-.search-row input{flex:1;background:var(--card);border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;padding:.62rem 1rem;outline:none;transition:border-color .2s;}
-.search-row input:focus{border-color:var(--cyan);}
+/* MESH CARDS */
+.mesh-card{background:var(--card);border:2px solid var(--border);border-radius:20px;overflow:hidden;transition:0.2s;}
+.mesh-card:hover{border-color:var(--cyan);}
+.mesh-thumb img{width:100%;aspect-ratio:1.2;object-fit:cover;}
+.mesh-body{padding:1.2rem;display:flex;flex-direction:column;gap:10px;}
+.mesh-title-row{display:flex;justify-content:space-between;align-items:center;}
 
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:1.75rem;}
+.main-copy-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.copy-btn{background:var(--surface);border:2px solid var(--border);padding:10px;border-radius:12px;cursor:pointer;color:white;text-align:left;transition:0.2s;}
+.copy-btn:hover{border-color:var(--cyan);background:rgba(94,231,255,0.05);}
+.btn-label{display:block;font-size:0.6rem;color:var(--cyan);font-weight:900;text-transform:uppercase;}
 
-.mesh-card{background:var(--card);border:2px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s;}
-.mesh-card:hover{transform:translateY(-4px) rotate(-.5deg);border-color:var(--cyan);box-shadow:0 8px 30px rgba(94,231,255,.14);}
-.mesh-thumb{width:100%;aspect-ratio:1;background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.mesh-thumb img{width:100%;height:100%;object-fit:cover;}
-.mesh-body{padding:.95rem 1.1rem 1.1rem;}
-.asset-id{font-size:.66rem;font-weight:900;color:var(--cyan);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.22rem;}
-.card-name{font-size:.98rem;font-weight:900;margin-bottom:.18rem;}
-.card-author{font-size:.73rem;font-weight:700;color:var(--muted);margin-bottom:.5rem;}
-.card-desc{font-size:.77rem;font-weight:600;color:var(--muted);line-height:1.5;margin-bottom:.7rem;}
-.tags{display:flex;flex-wrap:wrap;gap:.28rem;margin-bottom:.75rem;}
-.tag{font-size:.6rem;font-weight:800;padding:.16rem .48rem;border-radius:99px;text-transform:uppercase;letter-spacing:.04em;}
-.tag-cyan{background:rgba(94,231,255,.11);color:var(--cyan);}
-.tag-pink{background:rgba(255,107,203,.11);color:var(--pink);}
-.tag-green{background:rgba(124,255,107,.11);color:var(--green);}
-.tag-yellow{background:rgba(255,229,102,.11);color:var(--yellow);}
-.tag-orange{background:rgba(255,154,60,.11);color:var(--orange);}
-.tag-purple{background:rgba(177,107,255,.11);color:var(--purple);}
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000;}
+.modal-content{background:var(--card);padding:2.5rem;border-radius:24px;width:380px;border:2px solid var(--border);text-align:center;}
+.modal.show{display:flex;}
+input, textarea{width:100%;padding:12px;background:var(--bg);border:2px solid var(--border);color:white;border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;}
 
-.btn{display:inline-flex;align-items:center;gap:.32rem;padding:.48rem .88rem;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.74rem;font-weight:900;border:2px solid transparent;cursor:pointer;transition:all .17s;text-decoration:none;}
-.btn-cyan{background:rgba(94,231,255,.12);color:var(--cyan);border-color:rgba(94,231,255,.26);}
-.btn-cyan:hover{background:var(--cyan);color:#000;}
-.btn-pink{background:rgba(255,107,203,.12);color:var(--pink);border-color:rgba(255,107,203,.26);}
-.btn-pink:hover{background:var(--pink);color:#000;}
-.btn-yellow{background:rgba(255,229,102,.12);color:var(--yellow);border-color:rgba(255,229,102,.26);}
-.btn-yellow:hover{background:var(--yellow);color:#000;}
-.btn-green{background:rgba(124,255,107,.12);color:var(--green);border-color:rgba(124,255,107,.26);}
-.btn-green:hover{background:var(--green);color:#000;}
-.btn-red{background:rgba(255,68,102,.12);color:var(--red);border-color:rgba(255,68,102,.26);}
-.btn-red:hover{background:var(--red);color:#fff;}
-.btn-ghost{background:transparent;color:var(--muted);border-color:var(--border);}
-.btn-ghost:hover{color:var(--text);border-color:var(--muted);}
+.btn-main{width:100%;padding:14px;border-radius:12px;border:none;font-weight:900;cursor:pointer;background:var(--cyan);color:black;font-size:1rem;}
+.btn-del{background:none;border:none;color:var(--red);font-size:0.75rem;font-weight:800;cursor:pointer;margin-top:5px;text-decoration:underline;}
 
-.moveset-card{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:1.2rem;transition:transform .2s,border-color .2s,box-shadow .2s;}
-.code-block{background:#07060f;border:2px solid var(--border);border-radius:10px;padding:.8rem .95rem;font-family:'Courier New',monospace;font-size:.7rem;color:#a8ffb8;overflow-x:auto;margin-bottom:.8rem;white-space:pre-wrap;word-break:break-all;max-height:150px;overflow-y:auto;line-height:1.7;}
-
-.tutorial-card{background:var(--card);border:2px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s;}
-.tutorial-thumb{width:100%;aspect-ratio:16/9;background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
-.tutorial-thumb img{width:100%;height:100%;object-fit:cover;}
-.yt-badge{position:absolute;top:.5rem;left:.5rem;background:#f00;color:#fff;font-size:.56rem;font-weight:900;padding:.11rem .42rem;border-radius:4px;}
-
-.sound-card{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:1.05rem 1.2rem;transition:transform .2s,border-color .2s,box-shadow .2s;display:flex;flex-direction:column;gap:.42rem;}
-.sound-wave{display:flex;align-items:flex-end;gap:3px;height:24px;}
-.sound-wave span{width:4px;border-radius:2px;background:var(--green);opacity:.5;animation:wave 1s ease-in-out infinite alternate;}
-@keyframes wave{0%{transform:scaleY(.4);opacity:.35}100%{transform:scaleY(1);opacity:.9}}
-
-.mesh-copy-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.6rem;}
-.mesh-copy-btn{background:rgba(94,231,255,.07);border:1.5px solid rgba(94,231,255,.18);border-radius:9px;padding:.45rem .6rem;cursor:pointer;text-align:left;transition:all .18s;display:flex;flex-direction:column;}
-.mesh-copy-label{font-size:.58rem;font-weight:900;color:var(--cyan);text-transform:uppercase;}
-.mesh-copy-val{font-family:'Courier New',monospace;font-size:.62rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-
-.sound-id{font-family:'Courier New',monospace;font-size:.72rem;color:var(--green);background:rgba(124,255,107,.08);border:1px solid rgba(124,255,107,.17);border-radius:7px;padding:.28rem .55rem;}
-
-details{background:var(--card);border:2px solid var(--border);border-radius:16px;margin-top:.5rem;overflow:hidden;}
-details[open]{border-color:var(--pink);}
-summary{padding:.95rem 1.2rem;cursor:pointer;font-weight:900;font-size:.93rem;list-style:none;display:flex;align-items:center;justify-content:space-between;user-select:none;}
-summary::after{content:'＋';}
-details[open] summary::after{content:'－';color:var(--pink);}
-details>.panel-body{padding:0 1.4rem 1.4rem;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem;}
-.form-group{display:flex;flex-direction:column;gap:.28rem;}
-.form-group.span2{grid-column:1/-1;}
-label{font-size:.68rem;font-weight:900;text-transform:uppercase;color:var(--muted);}
-input,textarea,select{background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.86rem;font-weight:700;padding:.58rem .82rem;outline:none;width:100%;}
-input:focus,textarea:focus,select:focus{border-color:var(--pink);}
-
-.validate-badge{font-size:.68rem;font-weight:900;padding:.22rem .55rem;border-radius:7px;display:none;margin-top:.3rem;}
-.validate-badge.ok{background:rgba(124,255,107,.12);color:var(--green);display:inline-block;}
-.validate-badge.err{background:rgba(255,68,102,.12);color:var(--red);display:inline-block;}
-.validate-badge.checking{background:rgba(255,229,102,.1);color:var(--yellow);display:inline-block;}
-
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--pink);color:#000;font-weight:900;font-size:.83rem;padding:.68rem 1.15rem;border-radius:12px;z-index:2000;transform:translateY(80px);opacity:0;transition:all .3s;}
-.toast.show{transform:translateY(0);opacity:1;}
-
-.empty-state{text-align:center;padding:3.5rem 2rem;color:var(--muted);grid-column:1/-1;}
-
-@media(max-width:640px){ .tab-panel{padding:1.2rem;} .form-row{grid-template-columns:1fr;} .cards-grid{grid-template-columns:1fr;} }
+.system-tag{font-size:0.5rem;background:rgba(124,255,107,0.1);color:var(--green);padding:2px 4px;border-radius:3px;margin-left:4px;}
 </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <span class="logo">The <span>Vault</span></span>
-    <span class="header-badge">community</span>
-  </div>
-  <div class="header-right">
-    <button class="admin-btn" id="admin-login-btn">Admin Access</button>
+  <div class="logo">The <span>Vault</span></div>
+  <div class="auth-btns" id="auth-ui">
+    <button class="btn-user" onclick="openModal()">Login / Sign Up</button>
   </div>
 </header>
 
 <div class="tab-bar">
-  <button class="tab-btn active" data-tab="meshes"><span>🧱</span> Meshes</button>
-  <button class="tab-btn" data-tab="movesets"><span>⚔️</span> Movesets</button>
-  <button class="tab-btn" data-tab="tutorials"><span>📺</span> Tutorials</button>
-  <button class="tab-btn" data-tab="sounds"><span>🔊</span> Sound FX</button>
+  <button class="tab-btn active" data-tab="meshes">🧱 Meshes</button>
+  <button class="tab-btn" data-tab="movesets">⚔️ JJS Movesets</button>
 </div>
 
 <div class="tab-panel active" id="tab-meshes">
-  <div class="page-title">🧱 Mesh Library</div>
-  <div class="page-sub">Roblox mesh asset IDs. Verified and saved to the cloud.</div>
-  <div class="stats-row"><div class="stat-pill">🧱 <span class="stat-num" id="mesh-count">0</span> meshes</div></div>
-  <div class="search-row"><input id="mesh-search" placeholder="🔍 search by name, ID, tag..."/></div>
   <div class="cards-grid" id="mesh-grid"></div>
-  <details>
-    <summary>➕ Submit a Mesh</summary>
-    <div class="panel-body">
-      <div class="form-row">
-        <div class="form-group"><label>Asset ID*</label><input id="m-assetid" placeholder="e.g. 4442399410"/><div class="validate-badge" id="m-validate"></div></div>
-        <div class="form-group"><label>Mesh Name*</label><input id="m-name" placeholder="e.g. Low Poly Rock"/></div>
-        <div class="form-group"><label>Author</label><input id="m-author" placeholder="Roblox username"/></div>
-        <div class="form-group"><label>Category</label><input id="m-category" placeholder="e.g. Nature, Props..."/></div>
-        <div class="form-group span2"><label>Tags (comma separated)</label><input id="m-tags" placeholder="e.g. low-poly, terrain"/></div>
-        <div class="form-group span2"><label>Description</label><textarea id="m-desc" placeholder="Usage tips..."></textarea></div>
-      </div>
-      <button class="btn btn-cyan" id="m-submit">Submit to Cloud</button>
+  <div id="upload-area" style="display:none; margin-top:40px; background:var(--surface); padding:2rem; border-radius:20px; border:2px solid var(--border);">
+    <h2 style="margin-bottom:1.5rem">➕ Submit to the Vault</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+      <input id="m-name" placeholder="Name (e.g. Cursed Katana)">
+      <input id="m-assetid" placeholder="Roblox Asset ID">
+      <input id="m-meshid" placeholder="Internal Mesh ID (Optional)">
+      <input id="m-textid" placeholder="Texture ID (Optional)">
     </div>
-  </details>
+    <button class="btn-main" id="m-submit">Upload Mesh</button>
+  </div>
 </div>
 
 <div class="tab-panel" id="tab-movesets">
-  <div class="page-title">⚔️ Movesets</div>
-  <div class="page-sub">Import codes for Roblox movesets.</div>
-  <div class="stats-row"><div class="stat-pill">⚔️ <span class="stat-num" id="moveset-count">0</span> movesets</div></div>
-  <div class="search-row"><input id="moveset-search" placeholder="🔍 search movesets..."/></div>
-  <div id="moveset-grid" class="cards-grid"></div>
-  <details>
-    <summary>➕ Submit a Moveset</summary>
-    <div class="panel-body">
-      <div class="form-row">
-        <div class="form-group"><label>Name*</label><input id="mv-name" placeholder="e.g. Yuji"/></div>
-        <div class="form-group"><label>Author</label><input id="mv-author" placeholder="username"/></div>
-        <div class="form-group span2"><label>Import Code*</label><textarea id="mv-code" placeholder="Paste code..."></textarea></div>
-      </div>
-      <button class="btn btn-pink" id="mv-submit">Submit to Cloud</button>
-    </div>
-  </details>
+  <div class="cards-grid" id="moveset-grid"></div>
+  <div id="mv-upload-area" style="display:none; margin-top:40px; background:var(--surface); padding:2rem; border-radius:20px; border:2px solid var(--border);">
+    <h2>⚔️ Submit JJS Moveset</h2>
+    <input id="mv-name" placeholder="Moveset Name">
+    <textarea id="mv-code" placeholder="Paste Code Here" style="height:150px"></textarea>
+    <button class="btn-main" style="background:var(--pink)" id="mv-submit">Upload Moveset</button>
+  </div>
 </div>
 
-<div class="tab-panel" id="tab-tutorials">
-  <div class="page-title">📺 Tutorials</div>
-  <div class="page-sub">Resources for Roblox developers.</div>
-  <div class="stats-row"><div class="stat-pill">📺 <span class="stat-num" id="tutorial-count">0</span> items</div></div>
-  <div class="search-row"><input id="tutorial-search" placeholder="🔍 search tutorials..."/></div>
-  <div class="cards-grid" id="tutorial-grid"></div>
-  <details>
-    <summary>➕ Submit a Resource</summary>
-    <div class="panel-body">
-      <div class="form-row">
-        <div class="form-group"><label>Title*</label><input id="t-title" placeholder="How to rig..."/></div>
-        <div class="form-group"><label>Type*</label><select id="t-type"><option value="youtube">YouTube</option><option value="image">Image/Link</option></select></div>
-        <div class="form-group span2"><label>URL*</label><input id="t-url" placeholder="https://..."/></div>
-      </div>
-      <button class="btn btn-yellow" id="t-submit">Submit to Cloud</button>
-    </div>
-  </details>
+<div class="modal" id="auth-modal">
+  <div class="modal-content">
+    <h2 id="modal-title" style="margin-bottom:1.5rem">Account Access</h2>
+    <input type="email" id="auth-email" placeholder="Email Address">
+    <input type="password" id="auth-pass" placeholder="Password">
+    <button class="btn-main" onclick="handleAuth('login')">Login</button>
+    <button class="btn-main" style="background:var(--surface); color:white; margin-top:12px;" onclick="handleAuth('signup')">Sign Up</button>
+    <button onclick="closeModal()" style="background:none; border:none; color:var(--muted); cursor:pointer; width:100%; margin-top:15px; font-weight:800;">Close</button>
+  </div>
 </div>
-
-<div class="tab-panel" id="tab-sounds">
-  <div class="page-title">🔊 Sound FX</div>
-  <div class="page-sub">Roblox audio asset IDs.</div>
-  <div class="stats-row"><div class="stat-pill">🔊 <span class="stat-num" id="sound-count">0</span> sounds</div></div>
-  <div class="search-row"><input id="sound-search" placeholder="🔍 search sounds..."/></div>
-  <div class="cards-grid" id="sound-grid"></div>
-  <details>
-    <summary>➕ Submit a Sound</summary>
-    <div class="panel-body">
-      <div class="form-row">
-        <div class="form-group"><label>Sound Name*</label><input id="s-name" placeholder="e.g. Sword Swing"/></div>
-        <div class="form-group"><label>Asset ID*</label><input id="s-assetid" placeholder="e.g. 9042013222"/></div>
-      </div>
-      <button class="btn btn-green" id="s-submit">Submit to Cloud</button>
-    </div>
-  </details>
-</div>
-
-<div class="toast" id="toast"></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, setDoc, doc, getDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAppd2GsEJyzdN8TxOLCmFOiSXikkXQAuM",
@@ -244,155 +111,114 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink);}
     projectId: "the-vault-1ea3a",
     storageBucket: "the-vault-1ea3a.firebasestorage.app",
     messagingSenderId: "780186978448",
-    appId: "1:780186978448:web:cf80b8c1bb6f70d3b3b015",
-    measurementId: "G-EF4V5VJ83D"
+    appId: "1:780186978448:web:cf80b8c1bb6f70d3b3b015"
   };
 
-  // Initialize
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth(app);
 
-  // --- UI UTILS ---
-  const el = id => document.getElementById(id);
-  const val = id => el(id).value.trim();
-  const toast = (msg, col) => {
-    const e = el('toast'); e.textContent = msg; e.style.background = col || 'var(--pink)';
-    e.classList.add('show'); setTimeout(() => e.classList.remove('show'), 3000);
+  // --- ADMIN CONFIG ---
+  const ADMIN_UID = "6eMRv5PgObXsKys66yNzOYRLWGp2"; 
+  let currentUser = null;
+
+  // --- AUTH HANDLERS ---
+  window.openModal = () => document.getElementById('auth-modal').classList.add('show');
+  window.closeModal = () => document.getElementById('auth-modal').classList.remove('show');
+
+  window.handleAuth = async (type) => {
+    const email = document.getElementById('auth-email').value;
+    const pass = document.getElementById('auth-pass').value;
+    try {
+      if(type === 'signup') {
+        const res = await createUserWithEmailAndPassword(auth, email, pass);
+        await setDoc(doc(db, "users", res.user.uid), { email, isBanned: false, createdAt: Date.now() });
+      } else {
+        await signInWithEmailAndPassword(auth, email, pass);
+      }
+      closeModal();
+    } catch(e) { alert(e.message); }
   };
 
-  // --- DATA LOADING (REAL-TIME) ---
-  const sync = (colName, gridId, countId, renderFn) => {
-    const q = query(collection(db, colName), orderBy("createdAt", "desc"));
-    onSnapshot(q, (snap) => {
-      const data = [];
-      snap.forEach(doc => data.push({id: doc.id, ...doc.data()}));
-      el(countId).textContent = data.length;
-      renderFn(data, el(gridId));
-    });
-  };
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    const ui = document.getElementById('auth-ui');
+    const mArea = document.getElementById('upload-area');
+    const mvArea = document.getElementById('mv-upload-area');
 
-  // --- RENDERING LOGIC ---
-  const renderMeshes = (data, grid) => {
-    grid.innerHTML = data.map(m => `
+    if(user) {
+      const userSnap = await getDoc(doc(db, "users", user.uid));
+      if(userSnap.exists() && userSnap.data().isBanned) {
+        alert("You have been banned from The Vault.");
+        signOut(auth); return;
+      }
+      mArea.style.display = 'block';
+      mvArea.style.display = 'block';
+      ui.innerHTML = `<span>${user.email.split('@')[0]}</span> ${user.uid === ADMIN_UID ? '<span class="admin-badge">Admin</span>' : ''} <button class="btn-user" onclick="auth.signOut()">Logout</button>`;
+    } else {
+      mArea.style.display = 'none';
+      mvArea.style.display = 'none';
+      ui.innerHTML = `<button class="btn-user" onclick="openModal()">Login / Sign Up</button>`;
+    }
+  });
+
+  // --- RENDERING ---
+  const renderMeshes = (data) => {
+    document.getElementById('mesh-grid').innerHTML = data.map(m => `
       <div class="mesh-card">
-        <div class="mesh-thumb"><img src="https://thumbnails.roblox.com/v1/assets?assetIds=${m.assetId}&size=420x420&format=Png" onerror="this.src='https://via.placeholder.com/150?text=No+Preview'"></div>
+        <div class="mesh-thumb"><img src="https://thumbnails.roblox.com/v1/assets?assetIds=${m.assetId}&size=420x420&format=Png" onerror="this.src='https://via.placeholder.com/400?text=No+Image'"></div>
         <div class="mesh-body">
-          <div class="asset-id">ID: ${m.assetId}</div>
-          <div class="card-name">${m.name}</div>
-          <div class="card-author">by ${m.author || 'Anonymous'}</div>
-          <div class="mesh-copy-grid">
-            <button class="mesh-copy-btn" onclick="navigator.clipboard.writeText('${m.assetId}'); alert('Copied!')">
-              <span class="mesh-copy-label">Copy ID</span>
-              <span class="mesh-copy-val">${m.assetId}</span>
+          <div class="mesh-title-row">
+            <strong>${m.name}</strong>
+            ${currentUser?.uid === ADMIN_UID ? `<button class="btn-del" onclick="if(confirm('Delete?')) deleteDoc(doc(db,'meshes','${m.id}'))">Delete</button>` : ''}
+          </div>
+          <div class="main-copy-btns">
+            <button class="copy-btn" onclick="navigator.clipboard.writeText('${m.meshId}'); alert('Copied Mesh ID')">
+              <span class="btn-label">Mesh ID ${m.autoMesh ? '<span class="system-tag">SYS</span>' : ''}</span>
+              <span style="font-size:0.75rem">${m.meshId}</span>
+            </button>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText('${m.textureId}'); alert('Copied Texture ID')">
+              <span class="btn-label" style="color:var(--pink)">Texture ID</span>
+              <span style="font-size:0.75rem">${m.textureId}</span>
             </button>
           </div>
+          ${currentUser?.uid === ADMIN_UID ? `<button class="btn-del" style="color:var(--yellow)" onclick="if(confirm('Ban User?')) updateDoc(doc(db,'users','${m.userId}'), {isBanned: true})">Ban Uploader</button>` : ''}
         </div>
       </div>
-    `).join('') || '<div class="empty-state">No meshes found.</div>';
+    `).join('');
   };
 
-  const renderMovesets = (data, grid) => {
-    grid.innerHTML = data.map(mv => `
-      <div class="moveset-card">
-        <div class="card-name">⚔️ ${mv.name}</div>
-        <div class="card-author">by ${mv.author || 'Anonymous'}</div>
-        <div class="code-block">${mv.code}</div>
-        <button class="btn btn-pink" onclick="navigator.clipboard.writeText(\`${mv.code}\`); alert('Code Copied!')">📋 Copy Code</button>
-      </div>
-    `).join('') || '<div class="empty-state">No movesets found.</div>';
-  };
-
-  const renderTutorials = (data, grid) => {
-    grid.innerHTML = data.map(t => `
-      <div class="tutorial-card">
-        <div class="tutorial-body">
-          <div class="card-name">${t.title}</div>
-          <a class="btn btn-yellow" href="${t.url}" target="_blank">↗ Open ${t.type}</a>
-        </div>
-      </div>
-    `).join('') || '<div class="empty-state">No tutorials found.</div>';
-  };
-
-  const renderSounds = (data, grid) => {
-    grid.innerHTML = data.map(s => `
-      <div class="sound-card">
-        <div class="sound-wave"><span></span><span></span><span></span><span></span></div>
-        <div class="card-name">${s.name}</div>
-        <div class="sound-id">rbxassetid://${s.assetId}</div>
-        <button class="btn btn-green" onclick="navigator.clipboard.writeText('${s.assetId}'); alert('ID Copied!')">📋 Copy ID</button>
-      </div>
-    `).join('') || '<div class="empty-state">No sounds found.</div>';
-  };
-
-  // --- SUBMISSIONS ---
-  el('m-submit').onclick = async () => {
-    if(!val('m-assetid') || !val('m-name')) return toast("Missing fields!", "var(--red)");
+  // --- DATABASE OPS ---
+  document.getElementById('m-submit').onclick = async () => {
+    const mesh = document.getElementById('m-meshid').value.trim();
+    const tex = document.getElementById('m-textid').value.trim();
+    const asset = document.getElementById('m-assetid').value.trim();
+    
     await addDoc(collection(db, "meshes"), {
-      assetId: val('m-assetid'), name: val('m-name'), author: val('m-author'), 
-      category: val('m-category'), tags: val('m-tags'), createdAt: Date.now()
+      name: document.getElementById('m-name').value,
+      assetId: asset,
+      meshId: mesh || ("rbxassetid://" + asset),
+      textureId: tex || "None",
+      autoMesh: !mesh,
+      userId: currentUser.uid,
+      createdAt: Date.now()
     });
-    toast("Mesh added to Cloud! ☁️");
+    alert("Uploaded!");
   };
 
-  el('mv-submit').onclick = async () => {
-    if(!val('mv-name') || !val('mv-code')) return toast("Missing fields!", "var(--red)");
-    await addDoc(collection(db, "movesets"), {
-      name: val('mv-name'), author: val('mv-author'), code: val('mv-code'), createdAt: Date.now()
-    });
-    toast("Moveset added to Cloud! ⚔️");
-  };
-
-  el('t-submit').onclick = async () => {
-    if(!val('t-title') || !val('t-url')) return toast("Missing fields!", "var(--red)");
-    await addDoc(collection(db, "tutorials"), {
-      title: val('t-title'), url: val('t-url'), type: val('t-type'), createdAt: Date.now()
-    });
-    toast("Resource added to Cloud! 📺");
-  };
-
-  el('s-submit').onclick = async () => {
-    if(!val('s-assetid') || !val('s-name')) return toast("Missing fields!", "var(--red)");
-    await addDoc(collection(db, "sounds"), {
-      assetId: val('s-assetid'), name: val('s-name'), createdAt: Date.now()
-    });
-    toast("Sound added to Cloud! 🔊");
-  };
-
-  // --- ADMIN LOGIN ---
-  el('admin-login-btn').onclick = async () => {
-    const email = prompt("Admin Email:");
-    const pass = prompt("Password:");
-    if(email && pass) {
-      try { await signInWithEmailAndPassword(auth, email, pass); } 
-      catch(e) { toast("Login Failed!", "var(--red)"); }
-    }
-  };
-
-  onAuthStateChanged(auth, user => {
-    if(user) {
-      el('admin-login-btn').textContent = "Logout Admin";
-      el('admin-login-btn').onclick = () => signOut(auth);
-      toast("Logged in as Admin");
-    } else {
-      el('admin-login-btn').textContent = "Admin Access";
-    }
+  // Sync
+  onSnapshot(query(collection(db, "meshes"), orderBy("createdAt", "desc")), (s) => {
+    renderMeshes(s.docs.map(d => ({id: d.id, ...d.data()})));
   });
 
-  // --- TABS & INIT ---
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.onclick = () => {
+  // Tab Switcher
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.onclick = () => {
       document.querySelectorAll('.tab-btn, .tab-panel').forEach(x => x.classList.remove('active'));
-      btn.classList.add('active');
-      el('tab-' + btn.dataset.tab).classList.add('active');
-    };
+      b.classList.add('active');
+      document.getElementById('tab-' + b.dataset.tab).classList.add('active');
+    }
   });
-
-  sync('meshes', 'mesh-grid', 'mesh-count', renderMeshes);
-  sync('movesets', 'moveset-grid', 'moveset-count', renderMovesets);
-  sync('tutorials', 'tutorial-grid', 'tutorial-count', renderTutorials);
-  sync('sounds', 'sound-grid', 'sound-count', renderSounds);
-
 </script>
 </body>
 </html>
