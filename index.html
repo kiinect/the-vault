@@ -6,7 +6,7 @@
 <style>
 :root {
   --bg:#0f0e17; --surface:#1a1826; --card:#211f32; --border:#2e2b47;
-  --text:#f0eeff; --muted:#7a758f; --pink:#ff6bcb; --cyan:#5ee7ff; --green:#7cff6b; --red:#ff4466;
+  --text:#f0eeff; --muted:#7a758f; --pink:#ff6bcb; --cyan:#5ee7ff; --green:#7cff6b; --red:#ff4466; --yellow:#ffe566;
 }
 body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;margin:0;overflow-x:hidden;}
 header{padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
@@ -18,7 +18,7 @@ header{padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space
 .admin-badge{background:var(--red);color:white;font-size:0.6rem;font-weight:900;padding:2px 6px;border-radius:4px;text-transform:uppercase;}
 
 .tab-bar{display:flex;background:var(--surface);border-bottom:2px solid var(--border);overflow-x:auto;}
-.tab-btn{padding:1rem 1.5rem;background:none;border:none;color:var(--muted);font-weight:800;cursor:pointer;white-space:nowrap;}
+.tab-btn{padding:1rem 1.5rem;background:none;border:none;color:var(--muted);font-weight:800;cursor:pointer;white-space:nowrap;transition: 0.2s;}
 .tab-btn.active{color:var(--cyan);border-bottom:3px solid var(--cyan);}
 
 .tab-panel{display:none;padding:2rem;max-width:1400px;margin:auto;}
@@ -27,28 +27,24 @@ header{padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space
 
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
 
-/* MESH CARDS */
-.mesh-card{background:var(--card);border:2px solid var(--border);border-radius:20px;overflow:hidden;transition:0.2s;}
-.mesh-card:hover{border-color:var(--cyan);}
-.mesh-thumb img{width:100%;aspect-ratio:1.2;object-fit:cover;}
-.mesh-body{padding:1.2rem;display:flex;flex-direction:column;gap:10px;}
-.mesh-title-row{display:flex;justify-content:space-between;align-items:center;}
+/* CARD STYLES */
+.card{background:var(--card);border:2px solid var(--border);border-radius:20px;overflow:hidden;transition:0.2s;display:flex;flex-direction:column;}
+.card:hover{border-color:var(--cyan);}
+.thumb img{width:100%;aspect-ratio:1.2;object-fit:cover;}
+.card-body{padding:1.2rem;display:flex;flex-direction:column;gap:10px;flex-grow:1;}
 
-.main-copy-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.copy-btn{background:var(--surface);border:2px solid var(--border);padding:10px;border-radius:12px;cursor:pointer;color:white;text-align:left;transition:0.2s;}
-.copy-btn:hover{border-color:var(--cyan);background:rgba(94,231,255,0.05);}
+.copy-btn{background:var(--surface);border:2px solid var(--border);padding:10px;border-radius:12px;cursor:pointer;color:white;text-align:left;width:100%;}
 .btn-label{display:block;font-size:0.6rem;color:var(--cyan);font-weight:900;text-transform:uppercase;}
+
+/* FORM */
+.upload-box{margin-top:40px; background:var(--surface); padding:2rem; border-radius:20px; border:2px solid var(--border);}
+input, textarea, select{width:100%;padding:12px;background:var(--bg);border:2px solid var(--border);color:white;border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;}
+.btn-main{width:100%;padding:14px;border-radius:12px;border:none;font-weight:900;cursor:pointer;background:var(--cyan);color:black;}
 
 /* MODAL */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000;}
-.modal-content{background:var(--card);padding:2.5rem;border-radius:24px;width:380px;border:2px solid var(--border);text-align:center;}
 .modal.show{display:flex;}
-input, textarea{width:100%;padding:12px;background:var(--bg);border:2px solid var(--border);color:white;border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;}
-
-.btn-main{width:100%;padding:14px;border-radius:12px;border:none;font-weight:900;cursor:pointer;background:var(--cyan);color:black;font-size:1rem;}
-.btn-del{background:none;border:none;color:var(--red);font-size:0.75rem;font-weight:800;cursor:pointer;margin-top:5px;text-decoration:underline;}
-
-.system-tag{font-size:0.5rem;background:rgba(124,255,107,0.1);color:var(--green);padding:2px 4px;border-radius:3px;margin-left:4px;}
+.modal-content{background:var(--card);padding:2rem;border-radius:24px;width:350px;border:2px solid var(--border);text-align:center;}
 </style>
 </head>
 <body>
@@ -62,41 +58,59 @@ input, textarea{width:100%;padding:12px;background:var(--bg);border:2px solid va
 
 <div class="tab-bar">
   <button class="tab-btn active" data-tab="meshes">🧱 Meshes</button>
-  <button class="tab-btn" data-tab="movesets">⚔️ JJS Movesets</button>
+  <button class="tab-btn" data-tab="movesets">⚔️ Movesets</button>
+  <button class="tab-btn" data-tab="tutorials">📺 Tutorials</button>
+  <button class="tab-btn" data-tab="sounds">🔊 Sounds</button>
 </div>
 
 <div class="tab-panel active" id="tab-meshes">
   <div class="cards-grid" id="mesh-grid"></div>
-  <div id="upload-area" style="display:none; margin-top:40px; background:var(--surface); padding:2rem; border-radius:20px; border:2px solid var(--border);">
-    <h2 style="margin-bottom:1.5rem">➕ Submit to the Vault</h2>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-      <input id="m-name" placeholder="Name (e.g. Cursed Katana)">
-      <input id="m-assetid" placeholder="Roblox Asset ID">
-      <input id="m-meshid" placeholder="Internal Mesh ID (Optional)">
-      <input id="m-textid" placeholder="Texture ID (Optional)">
-    </div>
-    <button class="btn-main" id="m-submit">Upload Mesh</button>
+  <div class="upload-box auth-only" style="display:none">
+    <h3>Upload Mesh</h3>
+    <input id="m-name" placeholder="Name">
+    <input id="m-assetid" placeholder="Roblox Asset ID">
+    <button class="btn-main" onclick="submitMesh()">Post Mesh</button>
   </div>
 </div>
 
 <div class="tab-panel" id="tab-movesets">
   <div class="cards-grid" id="moveset-grid"></div>
-  <div id="mv-upload-area" style="display:none; margin-top:40px; background:var(--surface); padding:2rem; border-radius:20px; border:2px solid var(--border);">
-    <h2>⚔️ Submit JJS Moveset</h2>
+  <div class="upload-box auth-only" style="display:none">
+    <h3>Upload Moveset</h3>
     <input id="mv-name" placeholder="Moveset Name">
-    <textarea id="mv-code" placeholder="Paste Code Here" style="height:150px"></textarea>
-    <button class="btn-main" style="background:var(--pink)" id="mv-submit">Upload Moveset</button>
+    <textarea id="mv-code" placeholder="Paste Code"></textarea>
+    <button class="btn-main" style="background:var(--pink)" onclick="submitMoveset()">Post Moveset</button>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-tutorials">
+  <div class="cards-grid" id="tutorial-grid"></div>
+  <div class="upload-box auth-only" style="display:none">
+    <h3>Upload Video Tutorial</h3>
+    <input id="t-name" placeholder="Tutorial Title">
+    <input id="t-url" placeholder="YouTube URL (e.g. https://youtu.be/...)">
+    <button class="btn-main" style="background:var(--yellow)" onclick="submitTutorial()">Post Tutorial</button>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-sounds">
+  <div class="cards-grid" id="sound-grid"></div>
+  <div class="upload-box auth-only" style="display:none">
+    <h3>Upload Sound FX</h3>
+    <input id="s-name" placeholder="Sound Name">
+    <input id="s-assetid" placeholder="Roblox Audio ID">
+    <button class="btn-main" style="background:var(--green)" onclick="submitSound()">Post Sound</button>
   </div>
 </div>
 
 <div class="modal" id="auth-modal">
   <div class="modal-content">
-    <h2 id="modal-title" style="margin-bottom:1.5rem">Account Access</h2>
-    <input type="email" id="auth-email" placeholder="Email Address">
+    <h2>Account Access</h2>
+    <input type="email" id="auth-email" placeholder="Email">
     <input type="password" id="auth-pass" placeholder="Password">
     <button class="btn-main" onclick="handleAuth('login')">Login</button>
-    <button class="btn-main" style="background:var(--surface); color:white; margin-top:12px;" onclick="handleAuth('signup')">Sign Up</button>
-    <button onclick="closeModal()" style="background:none; border:none; color:var(--muted); cursor:pointer; width:100%; margin-top:15px; font-weight:800;">Close</button>
+    <button class="btn-main" style="background:var(--surface); color:white; margin-top:10px;" onclick="handleAuth('signup')">Sign Up</button>
+    <button onclick="closeModal()" style="margin-top:10px; background:none; border:none; color:var(--muted); cursor:pointer;">Cancel</button>
   </div>
 </div>
 
@@ -118,11 +132,19 @@ input, textarea{width:100%;padding:12px;background:var(--bg);border:2px solid va
   const db = getFirestore(app);
   const auth = getAuth(app);
 
-  // --- ADMIN CONFIG ---
-  const ADMIN_UID = "6eMRv5PgObXsKys66yNzOYRLWGp2"; 
+  const ADMIN_UID = "6eMRv5PgObXsKys66yNzOYRLWGp2";
   let currentUser = null;
 
-  // --- AUTH HANDLERS ---
+  // --- TAB SYSTEM ---
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.tab-btn, .tab-panel').forEach(el => el.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    };
+  });
+
+  // --- AUTH ---
   window.openModal = () => document.getElementById('auth-modal').classList.add('show');
   window.closeModal = () => document.getElementById('auth-modal').classList.remove('show');
 
@@ -132,10 +154,8 @@ input, textarea{width:100%;padding:12px;background:var(--bg);border:2px solid va
     try {
       if(type === 'signup') {
         const res = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db, "users", res.user.uid), { email, isBanned: false, createdAt: Date.now() });
-      } else {
-        await signInWithEmailAndPassword(auth, email, pass);
-      }
+        await setDoc(doc(db, "users", res.user.uid), { email, isBanned: false });
+      } else { await signInWithEmailAndPassword(auth, email, pass); }
       closeModal();
     } catch(e) { alert(e.message); }
   };
@@ -143,82 +163,88 @@ input, textarea{width:100%;padding:12px;background:var(--bg);border:2px solid va
   onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     const ui = document.getElementById('auth-ui');
-    const mArea = document.getElementById('upload-area');
-    const mvArea = document.getElementById('mv-upload-area');
+    const authForms = document.querySelectorAll('.auth-only');
 
     if(user) {
-      const userSnap = await getDoc(doc(db, "users", user.uid));
-      if(userSnap.exists() && userSnap.data().isBanned) {
-        alert("You have been banned from The Vault.");
-        signOut(auth); return;
-      }
-      mArea.style.display = 'block';
-      mvArea.style.display = 'block';
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if(snap.exists() && snap.data().isBanned) { alert("Banned."); signOut(auth); return; }
+      authForms.forEach(f => f.style.display = 'block');
       ui.innerHTML = `<span>${user.email.split('@')[0]}</span> ${user.uid === ADMIN_UID ? '<span class="admin-badge">Admin</span>' : ''} <button class="btn-user" onclick="auth.signOut()">Logout</button>`;
     } else {
-      mArea.style.display = 'none';
-      mvArea.style.display = 'none';
+      authForms.forEach(f => f.style.display = 'none');
       ui.innerHTML = `<button class="btn-user" onclick="openModal()">Login / Sign Up</button>`;
     }
   });
 
-  // --- RENDERING ---
-  const renderMeshes = (data) => {
-    document.getElementById('mesh-grid').innerHTML = data.map(m => `
-      <div class="mesh-card">
-        <div class="mesh-thumb"><img src="https://thumbnails.roblox.com/v1/assets?assetIds=${m.assetId}&size=420x420&format=Png" onerror="this.src='https://via.placeholder.com/400?text=No+Image'"></div>
-        <div class="mesh-body">
-          <div class="mesh-title-row">
-            <strong>${m.name}</strong>
-            ${currentUser?.uid === ADMIN_UID ? `<button class="btn-del" onclick="if(confirm('Delete?')) deleteDoc(doc(db,'meshes','${m.id}'))">Delete</button>` : ''}
-          </div>
-          <div class="main-copy-btns">
-            <button class="copy-btn" onclick="navigator.clipboard.writeText('${m.meshId}'); alert('Copied Mesh ID')">
-              <span class="btn-label">Mesh ID ${m.autoMesh ? '<span class="system-tag">SYS</span>' : ''}</span>
-              <span style="font-size:0.75rem">${m.meshId}</span>
-            </button>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText('${m.textureId}'); alert('Copied Texture ID')">
-              <span class="btn-label" style="color:var(--pink)">Texture ID</span>
-              <span style="font-size:0.75rem">${m.textureId}</span>
-            </button>
-          </div>
-          ${currentUser?.uid === ADMIN_UID ? `<button class="btn-del" style="color:var(--yellow)" onclick="if(confirm('Ban User?')) updateDoc(doc(db,'users','${m.userId}'), {isBanned: true})">Ban Uploader</button>` : ''}
-        </div>
-      </div>
-    `).join('');
-  };
+  // --- ADMIN ACTIONS ---
+  window.deleteItem = (col, id) => { if(confirm("Delete this?")) deleteDoc(doc(db, col, id)); };
+  window.banUser = (uid) => { if(confirm("Ban this user?")) updateDoc(doc(db, "users", uid), {isBanned: true}); };
 
-  // --- DATABASE OPS ---
-  document.getElementById('m-submit').onclick = async () => {
-    const mesh = document.getElementById('m-meshid').value.trim();
-    const tex = document.getElementById('m-textid').value.trim();
-    const asset = document.getElementById('m-assetid').value.trim();
-    
-    await addDoc(collection(db, "meshes"), {
-      name: document.getElementById('m-name').value,
-      assetId: asset,
-      meshId: mesh || ("rbxassetid://" + asset),
-      textureId: tex || "None",
-      autoMesh: !mesh,
-      userId: currentUser.uid,
-      createdAt: Date.now()
-    });
+  // --- UPLOAD FUNCTIONS ---
+  window.submitMesh = async () => {
+    await addDoc(collection(db, "meshes"), { name: document.getElementById('m-name').value, assetId: document.getElementById('m-assetid').value, userId: currentUser.uid, createdAt: Date.now() });
+    alert("Uploaded!");
+  };
+  window.submitMoveset = async () => {
+    await addDoc(collection(db, "movesets"), { name: document.getElementById('mv-name').value, code: document.getElementById('mv-code').value, userId: currentUser.uid, createdAt: Date.now() });
+    alert("Uploaded!");
+  };
+  window.submitTutorial = async () => {
+    const url = document.getElementById('t-url').value;
+    const vidId = url.split('v=')[1] || url.split('/').pop();
+    await addDoc(collection(db, "tutorials"), { name: document.getElementById('t-name').value, url, vidId, userId: currentUser.uid, createdAt: Date.now() });
+    alert("Uploaded!");
+  };
+  window.submitSound = async () => {
+    await addDoc(collection(db, "sounds"), { name: document.getElementById('s-name').value, assetId: document.getElementById('s-assetid').value, userId: currentUser.uid, createdAt: Date.now() });
     alert("Uploaded!");
   };
 
-  // Sync
-  onSnapshot(query(collection(db, "meshes"), orderBy("createdAt", "desc")), (s) => {
-    renderMeshes(s.docs.map(d => ({id: d.id, ...d.data()})));
-  });
+  // --- DATA SYNC ---
+  const sync = (col, gridId, renderFn) => {
+    onSnapshot(query(collection(db, col), orderBy("createdAt", "desc")), (s) => {
+      document.getElementById(gridId).innerHTML = s.docs.map(d => renderFn({id: d.id, ...d.data()})).join('');
+    });
+  };
 
-  // Tab Switcher
-  document.querySelectorAll('.tab-btn').forEach(b => {
-    b.onclick = () => {
-      document.querySelectorAll('.tab-btn, .tab-panel').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      document.getElementById('tab-' + b.dataset.tab).classList.add('active');
-    }
-  });
+  sync("meshes", "mesh-grid", (m) => `
+    <div class="card">
+      <div class="thumb"><img src="https://thumbnails.roblox.com/v1/assets?assetIds=${m.assetId}&size=420x420&format=Png"></div>
+      <div class="card-body">
+        <strong>${m.name}</strong>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText('rbxassetid://${m.assetId}')"><span class="btn-label">Mesh ID</span>rbxassetid://${m.assetId}</button>
+        ${currentUser?.uid === ADMIN_UID ? `<button onclick="deleteItem('meshes','${m.id}')" style="color:red; background:none; border:none;">Delete</button> <button onclick="banUser('${m.userId}')" style="color:orange; background:none; border:none;">Ban User</button>` : ''}
+      </div>
+    </div>
+  `);
+
+  sync("movesets", "moveset-grid", (m) => `
+    <div class="card" style="padding:1rem;">
+      <strong>⚔️ ${m.name}</strong>
+      <textarea readonly style="height:60px; font-size:10px; margin-top:10px;">${m.code}</textarea>
+      <button class="btn-main" style="background:var(--pink); margin-top:10px;" onclick="navigator.clipboard.writeText('${m.code}')">Copy Code</button>
+      ${currentUser?.uid === ADMIN_UID ? `<button onclick="deleteItem('movesets','${m.id}')" style="color:red; background:none; border:none; margin-top:5px;">Delete</button>` : ''}
+    </div>
+  `);
+
+  sync("tutorials", "tutorial-grid", (t) => `
+    <div class="card">
+      <div class="thumb"><img src="https://img.youtube.com/vi/${t.vidId}/hqdefault.jpg"></div>
+      <div class="card-body">
+        <strong>${t.name}</strong>
+        <a href="${t.url}" target="_blank" class="btn-main" style="background:var(--yellow); text-align:center; text-decoration:none; display:block;">Watch Tutorial</a>
+        ${currentUser?.uid === ADMIN_UID ? `<button onclick="deleteItem('tutorials','${m.id}')" style="color:red; background:none; border:none;">Delete</button>` : ''}
+      </div>
+    </div>
+  `);
+
+  sync("sounds", "sound-grid", (s) => `
+    <div class="card" style="padding:1rem;">
+      <strong>🔊 ${s.name}</strong>
+      <button class="copy-btn" style="margin-top:10px; border-color:var(--green)" onclick="navigator.clipboard.writeText('${s.assetId}')"><span class="btn-label" style="color:var(--green)">Sound ID</span>${s.assetId}</button>
+      ${currentUser?.uid === ADMIN_UID ? `<button onclick="deleteItem('sounds','${s.id}')" style="color:red; background:none; border:none; margin-top:5px;">Delete</button>` : ''}
+    </div>
+  `);
 </script>
 </body>
 </html>
